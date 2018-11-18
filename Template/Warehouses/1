@@ -1,0 +1,38 @@
+ echo $this->Form->control('quantity');
+            echo $this->Form->control('unit_id', ['options' => $units]);
+            echo $this->Form->control('item_id', ['options' => $items]);
+
+
+
+
+
+
+
+
+ <td><?= $this->Number->format($warehouse->quantity) ?></td>
+                <td><?= $warehouse->has('unit') ? $this->Html->link($warehouse->unit->unit_name, ['controller' => 'Units', 'action' => 'view', $warehouse->unit->id]) : '' ?></td>
+                <td><?= $warehouse->has('item') ? $this->Html->link($warehouse->item->item_name, ['controller' => 'Items', 'action' => 'view', $warehouse->item->id]) : '' ?></td>
+
+
+
+ <th scope="col"><?= $this->Paginator->sort('quantity') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('unit_id') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('item_id') ?></th>
+
+
+
+
+
+ <tr>
+            <th scope="row"><?= __('Unit') ?></th>
+            <td><?= $warehouse->has('unit') ? $this->Html->link($warehouse->unit->unit_name, ['controller' => 'Units', 'action' => 'view', $warehouse->unit->id]) : '' ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= __('Item') ?></th>
+            <td><?= $warehouse->has('item') ? $this->Html->link($warehouse->item->item_name, ['controller' => 'Items', 'action' => 'view', $warehouse->item->id]) : '' ?></td>
+        </tr>
+
+<tr>
+            <th scope="row"><?= __('Quantity') ?></th>
+            <td><?= $this->Number->format($warehouse->quantity) ?></td>
+        </tr>
