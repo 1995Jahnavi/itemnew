@@ -83,8 +83,8 @@ class SalesOrdersController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $units = TableRegistry::get('Units');
-            $this->set('units',$units->find('list'));
+          //  $units = TableRegistry::get('Units');
+          //  $this->set('units',$units->find('list'));
             
             $items_table = TableRegistry::get('Items');
             $this->set('items',$items_table->find('list'));
