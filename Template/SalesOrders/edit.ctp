@@ -24,6 +24,9 @@
         <legend><?= __('Edit Sales Order') ?></legend>
         <?php
             echo $this->Form->control('customer_name');
+            $this->Form->templates(
+              ['dateWidget' => '{{day}}{{month}}{{year}}']
+            );
             echo $this->Form->control('created_date');
             echo $this->Form->control('delivary_date');
         ?>
@@ -37,8 +40,8 @@
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$salesOrderItems->id)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('name'=>'qty[]','required' => true)); ?></td>
-    <td><?php echo $this->Form->control('rate', array('name'=>'rte[]','required' => true)); ?></td>        
+    <td><?php echo $this->Form->control('quantity', array('name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>
+    <td><?php echo $this->Form->control('rate', array('name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>        
     <td><?php echo $this->Form->control('amount', array('name'=>'amt[]','required' => true)); ?></td>        
     <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td>   
     </tr>
@@ -54,8 +57,8 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
-    var item_select_box = document.getElementById('item-id');
-    window.onload = change(item_select_box);
+//    var item_select_box = document.getElementById('item-id');
+//    window.onload = change(item_select_box);
     
     function add_row() {
     var table = document.getElementById("salesOrderTable");
@@ -75,9 +78,9 @@
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
     <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
-    <td><?php echo $this->Form->control('', array('name'=>'qty[]','required' => true)); ?></td> \
-    <td><?php echo $this->Form->control('', array('name'=>'rte[]','required' => true)); ?></td> \
-    <td><?php echo $this->Form->control('', array('name'=>'amt[]','required' => true)); ?></td> \
+    <td><input type="text" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
+    <td><input type="text" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
+    <td><input type="text" name ="amt[]" id=amount'+(no_of_rows)+'></td> \
     <td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
     </tr>';
     var item_select_box = document.getElementById('item-id'+no_of_rows);
@@ -89,7 +92,6 @@ function deleteRow(row)
     document.getElementById("salesOrderTable").deleteRow(i);
 }
 function change(element){ 
-    console.log("fhfdh");
     var item_select_box = document.getElementById(element.id);
           console.log("element",item_select_box);               
     
@@ -112,7 +114,7 @@ function change(element){
     
     $.ajax({
         type: 'get',
-        url: '/stock-movements/getunits',
+        url: '/sales-orders/getunits',
         data: { 
         itemid: selected_value
         },
@@ -173,7 +175,7 @@ function change(element){
                 type:"POST",
                 async: true,
                 cache: false,
-                url: '/stock-movements/getitems',
+                url: '/sales-orders/getitems',
                 data: { 
                     salesorderid: checkids
                 },
@@ -206,5 +208,37 @@ function change(element){
         });
         }
       }
+function calculate_amount(element){     
+	var input_box = document.getElementById(element.id);
+	console.log("element ",input_box);
+	//var rate_box = document.getElementById("rate"+1);
+	console.log("rate_box");
+	//substring qty.id, get last number
+	
+		current_row = element.id[element.id.length -1]
+		console.log("current_row ",current_row); 	
+	if(current_row == "y" || current_row == "e"){
+		var rate_box = "";
+		if(current_row == "y"){
+			var rate_box = document.getElementById("rate");
+			var amount = input_box.value * rate_box.value;
+			console.log("rrrrrrr ",rate_box.value);
+		}else{
+			var qty_box = document.getElementById("quantity");
+			var amount = input_box.value * qty_box.value;
+		}    
+		console.log(amount);
+		$('amount').text(amount); 
+	}else{
+		console.log("in else");
+		current_row = element.id[element.id.length -1]
+		console.log("current_row ",current_row); 
+
+		var qty_box = document.getElementById("quantity-id"+current_row);
+		var rate_box = document.getElementById("rate-id"+current_row);
+		var amount = qty_box.value * rate_box.value;
+		console.log(amount);
+	}
+}
               
   </script>

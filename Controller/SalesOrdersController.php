@@ -1,9 +1,7 @@
 <?php
 namespace App\Controller;
-
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
-
 /**
  * SalesOrders Controller
  *
@@ -13,24 +11,30 @@ use Cake\ORM\TableRegistry;
  */
 class SalesOrdersController extends AppController
 {
-
     /**
      * Index method
      *
      * @return \Cake\Http\Response|void
      */
     public function index()
-    {
+    {   $this->paginate['order'] = ['id' => 'DESC'];
         $salesOrders = $this->paginate($this->SalesOrders);
         
-//         foreach($salesOrders as $salesOrder){
-//             $salesOrder = TableRegistry::get('SalesOrders');
+        // foreach($salesOrders as $salesOrder){
+          // $salesOrder = TableRegistry::get('SalesOrders');
             
-//             $cn= $salesOrder->get($salesOrder->customer_name);
-//             //debug($fw);die();
-//             $salesOrder->cn_name = $cn->name;
-      $this->set(compact('salesOrders'));
-//     }
+          //   $cn= $salesOrder->get($salesOrder->customer_name);
+         //    $salesOrder->cn_name = $cn->name;
+		// }
+		//foreach($salesOrders as $salesOrder){
+			
+		//$customers = TableRegistry::get('Customers');
+		
+		//$custom_name = $customers->get($salesOrder->customer_name);
+	    //$salesOrder->customer_name =$custom_name->name;
+	//}
+	  $this->set(compact('salesOrders'));
+    
     }
     /**
      * View method
@@ -44,10 +48,22 @@ class SalesOrdersController extends AppController
         $salesOrder = $this->SalesOrders->get($id, [
             'contain' => ['SalesOrderItems']
         ]);
-
+		foreach ($salesOrder->sales_order_items as $salesOrderItems)
+		{
+			     $items = TableRegistry::get('Items');
+                 $salesOrderItems->salesOrder_id=$salesOrder->id;
+                 $salesOrderItems->item_name=$items->get($salesOrderItems->item_id)->item_name;
+                
+                 $units = TableRegistry::get('Units');
+                 $salesOrderItems->salesOrder_id=$salesOrder->id;
+                 $salesOrderItems->unit_name=$units->get($salesOrderItems->unit_id)->unit_name;
+				 
+				 $warehouses = TableRegistry::get('Warehouses');
+                 $salesOrderItems->salesOrder_id=$salesOrder->id;
+                 $salesOrderItems->warehouse_name=$warehouses->get($salesOrderItems->warehouse_id)->name;
+		}
         $this->set('salesOrder', $salesOrder);
     }
-
     /**
      * Add method
      *
@@ -74,13 +90,12 @@ class SalesOrdersController extends AppController
                     $salesOrderitem->quantity= $data['qty'][$i];
                     $salesOrderitem->warehouse_id= $data['warehouses'][$i];
                     $salesOrderitem->rate= $data['rte'][$i];
-                    $salesOrderitem->amount= $data['amt'][$i];
+                   // $salesOrderitem->amount= $data['amt'][$i];
                     $soi->save($salesOrderitem);
                     $i++;
                 }
                 
                 $this->Flash->success(__('The sales order has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $units = TableRegistry::get('Units');
@@ -105,6 +120,7 @@ class SalesOrdersController extends AppController
             $warehouse_table = TableRegistry::get('Warehouses');
             $this->set('warehouses',$warehouse_table->find('list'));
         }
+		//$customers = $this->SalesOrders->Customers->find('list', ['limit' => 200]);
         $this->set(compact('salesOrder'));
     
     }
@@ -153,7 +169,6 @@ class SalesOrdersController extends AppController
                     
                 }  
                 $this->Flash->success(__('The sales order has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $units = TableRegistry::get('Units');
@@ -182,7 +197,6 @@ class SalesOrdersController extends AppController
         }
         $this->set(compact('salesOrder'));
     }
-
     /**
      * Delete method
      *
@@ -199,10 +213,8 @@ class SalesOrdersController extends AppController
         } else {
             $this->Flash->error(__('The sales order could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
-
 public function getunits()
 {
     $this->RequestHandler->respondAs('json');
@@ -254,5 +266,4 @@ public function getitems()
     $this->response->body($resultJ);
     return $this->response;
 }
-
 }

@@ -76,6 +76,7 @@ class StockMovementsController extends AppController
                  $stockMovementItems->stockMovement_id=$stockMovement->id;
                  $stockMovementItems->unit_name=$units->get($stockMovementItems->unit_id)->unit_name;
                  
+
             }
            $this->set('stockMovement', $stockMovement);
             

@@ -36,16 +36,20 @@
 
 	 <table id="stockMovementsTable">
     <?php
+    $index = 1;    
     foreach($stockMovement->stock_movement_items as $stockMovementItem)
     {
+    $itemid = 'item_id'.$index;
+    $unitid = 'unit_id'.$index;
     ?>
     <tr> 
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$stockMovementItem->id)); ?></td>
-    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'default'=>$stockMovementItem->item_id, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
+    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'default'=>$stockMovementItem->item_id, 'name'=>'items[]','id'=>$itemid, 'onchange'=>'change(this)')); ?></td>
     <td><?php echo $this->Form->control('quantity',  array('name'=>'qty[]','default'=>$stockMovementItem->quantity)); ?></td>
-    <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units,'default'=>$stockMovementItem->item_id, 'name'=>'units[]')); ?></td>
+    <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units,'default'=>$stockMovementItem->item_id,'id'=>$unitid, 'name'=>'units[]')); ?></td>
     </tr>
     <?php
+    $index++;
     }
     ?>
     
@@ -59,8 +63,22 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
   <?php echo $this->Html->script('stock_movements.js'); ?>
  <script>
-    var item_select_box = document.getElementById('item-id');
-    window.onload = change(item_select_box);
+    function do_onload(){
+        console.log('afasfasf111111');
+        //var item_select_box = document.getElementById('item-id');
+        //window.onload = change(item_select_box); 
+        var smCount = $('#stockMovementsTable tr').length;
+        console.log('afasfasf111111 ', smCount);        
+        for(var i=1; i<smCount;i++){
+            console.log("iiiiii ", $('#item_id'+i));
+            var item_id_select = $('#item_id'+i);
+            console.log("item_id_select ", item_id_select);
+            
+            change(item_id_select);
+            //it should keep the selected unit-id for that item from database as selected
+        }
+    }
+    window.onload = do_onload();
     
     function add_row() {
     var table = document.getElementById("stockMovementsTable");
@@ -79,7 +97,7 @@
     var row = table.insertRow().innerHTML ='<tr> \
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
-    <td><?php echo $this->Form->control('', array('name'=>'qty[]')); ?></td> \
+    <td><?php echo $this->Form->control('quantity', array('name'=>'qty[]')); ?></td> \
     <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
     </tr>';
     

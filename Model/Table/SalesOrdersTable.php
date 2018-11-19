@@ -38,7 +38,9 @@ class SalesOrdersTable extends Table
         $this->setPrimaryKey('id');
 
         $this->hasMany('SalesOrderItems', [
-            'foreignKey' => 'sales_order_id'
+            'foreignKey' => 'sales_order_id',
+            'dependent' => true,
+            'cascadeCallbacks' => true
         ]);
     }
 
