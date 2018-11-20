@@ -36,6 +36,11 @@ class SalesOrdersTable extends Table
         $this->setTable('sales_orders');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
+		
+		$this->belongsTo('Customers', [
+            'foreignKey' => 'customer_id',
+            'joinType' => 'INNER'
+        ]);
 
         $this->hasMany('SalesOrderItems', [
             'foreignKey' => 'sales_order_id',
@@ -57,9 +62,9 @@ class SalesOrdersTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->integer('customer_name')
-            ->requirePresence('customer_name', 'create')
-            ->notEmpty('customer_name');
+            ->integer('customer_id')
+            ->requirePresence('customer_id', 'create')
+            ->notEmpty('customer_id');
 
         $validator
             ->date('created_date')

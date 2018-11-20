@@ -17,7 +17,7 @@
     <fieldset>
         <legend><?= __('Add Sales Order') ?></legend>
         <?php
-            echo $this->Form->control('customer_name');
+            echo $this->Form->control('customer_id',array('type'=>'select','options'=>$customers));
 			$this->Form->templates(
               ['dateWidget' => '{{day}}{{month}}{{year}}']
             );
@@ -27,11 +27,10 @@
         ?>
     </fieldset>
     <table id="salesOrderTable">
-   
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>
-    <td><?php echo $this->Form->control('rate', array('name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>        
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>
+    <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>        
     <td><span id='amount'> </span> </td>     
     <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td>   
     </tr>
@@ -39,9 +38,8 @@
     <input type="button" id="delsmbutton" value="Delete" onclick="deleteRow(this)">
 	
     </table>
+    <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
-	
-    <input type="button"  value="Submit" />
 </div>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
@@ -66,8 +64,8 @@
     var row = table.insertRow().innerHTML ='<tr> \
     <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
     <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
-    <td><input type="text" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
-    <td><input type="text" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
+    <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
+    <td><input type="number" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
     <td><span id=amount'+(no_of_rows)+'> </span> </td> \
     <td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
     </tr>';
@@ -140,7 +138,7 @@ function calculate_amount(element){
 	console.log("rate_box");
 	//substring qty.id, get last number
 	
-		current_row = element.id[element.id.length -1]
+		current_row = element.id[element.id.length -1] 
 		console.log("current_row ",current_row); 	
 	if(current_row == "y" || current_row == "e"){
 		var rate_box = "";
@@ -163,17 +161,11 @@ function calculate_amount(element){
 		var rate_box = document.getElementById("rate-id"+current_row);
 		var amount = qty_box.value * rate_box.value;
 		console.log(amount);
-		$('#amount'+current_row).text(amount);
+		$('#amount'+current_row).html(amount);
 	}
-}
-//function validateForm() {
-	//var qty=/^[0-9]*$/;
-	//if(!qty){
-		//window.alert("enter the valid number");
-	    //qty.focus();
-		//return false
-//	}
 	
+}
+
      
 
 

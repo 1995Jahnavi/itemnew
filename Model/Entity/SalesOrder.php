@@ -26,7 +26,7 @@ class SalesOrder extends Entity
      * @var array
      */
     protected $_accessible = [
-        'customer_name' => true,
+        'customer_id' => true,
         'created_date' => true,
         'delivary_date' => true,
         'sales_order_items' => true

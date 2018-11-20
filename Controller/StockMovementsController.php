@@ -59,7 +59,7 @@ class StockMovementsController extends AppController
     {
         $stockMovement = $this->StockMovements->get($id, [
             'contain' => ['Warehouses', 'StockMovementItems']
-        ]); $i++;
+        ]); //$i++;
       
             $warehouses = TableRegistry::get('Warehouses');
             

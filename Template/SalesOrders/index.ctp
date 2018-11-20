@@ -18,7 +18,7 @@
         <thead>
             <tr>
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('customer_name') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('customer_id') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('created_date') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('delivary_date') ?></th>
                 <th scope="col" class="actions"><?= __('Actions') ?></th>
@@ -28,7 +28,7 @@
             <?php foreach ($salesOrders as $salesOrder): ?>
             <tr>
                 <td><?= $this->Number->format($salesOrder->id) ?></td>
-                <td><?= $this->Number->format($salesOrder->customer_name) ?></td>
+                <td><?= $salesOrder->customer_name ?></td>
                 <td><?= h($salesOrder->created_date) ?></td>
                 <td><?= h($salesOrder->delivary_date) ?></td>
                 <td class="actions">

@@ -23,7 +23,7 @@
     <fieldset>
         <legend><?= __('Edit Sales Order') ?></legend>
         <?php
-            echo $this->Form->control('customer_name');
+            echo $this->Form->control('customer_id',array('type'=>'select','options'=>$customers));
             $this->Form->templates(
               ['dateWidget' => '{{day}}{{month}}{{year}}']
             );
@@ -40,10 +40,10 @@
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$salesOrderItems->id)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>
-    <td><?php echo $this->Form->control('rate', array('name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>        
-    <td><?php echo $this->Form->control('amount', array('name'=>'amt[]','required' => true)); ?></td>        
-    <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td>   
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>
+    <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>
+    <td><span id='amount'></span></td>	
+    <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td>
     </tr>
     <?php
     }
@@ -57,8 +57,8 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
-//    var item_select_box = document.getElementById('item-id');
-//    window.onload = change(item_select_box);
+    var item_select_box = document.getElementById('item-id');
+    window.onload = change(item_select_box);
     
     function add_row() {
     var table = document.getElementById("salesOrderTable");
@@ -78,10 +78,10 @@
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
     <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
-    <td><input type="text" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
-    <td><input type="text" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
-    <td><input type="text" name ="amt[]" id=amount'+(no_of_rows)+'></td> \
-    <td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
+    <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
+    <td><input type="number" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
+	<td><span id=amount'+(no_of_rows)+'></span></td> \
+	<td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
     </tr>';
     var item_select_box = document.getElementById('item-id'+no_of_rows);
     change(item_select_box); 

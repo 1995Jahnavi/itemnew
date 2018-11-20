@@ -38,7 +38,7 @@
     <div class="related">
         <h4><?= __('Related Sales Order Items') ?></h4>
         <?php if (!empty($salesOrder->sales_order_items)): ?>
-        <table cellpadding="0" cellspacing="0">
+        <table cellpadding="0" cellspacing="0" id="viewTable">
             <tr>
                 <th scope="col"><?= __('Id') ?></th>
                 <th scope="col"><?= __('Item Id') ?></th>
@@ -48,19 +48,50 @@
                 <th scope="col"><?= __('Amount') ?></th>
                 <th scope="col"><?= __('Warehouse Id') ?></th>
             </tr>
-            <?php foreach ($salesOrder->sales_order_items as $salesOrderItems): ?>
+            <?php 
+			$index = 1;    			
+			foreach ($salesOrder->sales_order_items as $salesOrderItems): 
+			$quantity = 'quantity_id'.$index;
+			$rate = 'rate_id'.$index;
+            $amount='amount_id'.$index;			
+			?>
             <tr>
                 <td><?= h($salesOrderItems->id) ?></td>
                 <td><?= h($salesOrderItems->item_name) ?></td>
                 <td><?= h($salesOrderItems->unit_name) ?></td>
-                <td><?= h($salesOrderItems->quantity) ?></td>
-                <td><?= h($salesOrderItems->rate) ?></td>
-                <td><?= h($salesOrderItems->amount) ?></td>
+                <td id="<?php echo $quantity; ?>"><?= h($salesOrderItems->quantity) ?></td>
+                <td id="<?php echo $rate; ?>"><?= h($salesOrderItems->rate) ?></td>
+                <td id="<?php echo $amount; ?>"><?= h($salesOrderItems->amount) ?></td>
                 <td><?= h($salesOrderItems->warehouse_name) ?></td>
-                
             </tr>
+			 <?php
+              $index++;
+              
+             ?>
+			 
             <?php endforeach; ?>
         </table>
         <?php endif; ?>
     </div>
 </div>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+<script>
+ 
+ 
+		function do_onload(){
+        var smCount = $('#viewTable tr').length;
+        console.log('afasfasf111111 ', smCount);        
+        for(var i=1; i<smCount;i++){
+            console.log("iiiiii ", $('#quantity'+i));
+            var qty = $('#quantity_id'+i).text();
+			var rate = $('#rate_id'+i).text();
+			var amount = parseFloat(qty) * parseFloat(rate);
+			$('#amount_id'+i).text(amount);
+            console.log(amount,qty,rate);            
+		}
+		}
+		
+		window.onload = do_onload();
+
+   
+   </script>
