@@ -33,19 +33,23 @@
     </fieldset>
     <table id="salesOrderTable">
     <?php
+     $index = 1;  
     foreach($salesOrder->sales_order_items as $salesOrderItems)
     {
+    $itemid ='item_id'.$index;
+    $unitid = 'unit_id'.$index;
     ?>
     <tr>
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$salesOrderItems->id)); ?></td>
-    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
-    <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
+    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)', 'id'=>$itemid,'onchange'=>'change(this.id)')); ?></td>
+    <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]','id'=>$unitid)); ?></td>
     <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->quantity)); ?></td>
     <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->rate)); ?></td>
     <td><span id='amount'></span></td>
     <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td>
     </tr>
     <?php
+    $index++;
     }
     ?>
     <input type= "button" onclick= "add_row()" value= "Add row" > 
@@ -57,93 +61,111 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
-    var item_select_box = document.getElementById('item-id');
-    window.onload = change(item_select_box);
+    function do_onload(){
+     console.log('afasfasf111111');
+        var smCount = $('#stockMovementsTable tr').length;
+        console.log('afasfasf111111 ',smCount);        
+        for(var i=1; i<smCount;i++){
+            console.log("iiiiii ", $('#item_id'+i));
+            var item_id_select = $('#item_id'+i).attr('id');
+            console.log("item_id_select ", item_id_select);
+            
+           change(item_id_select);
+            //it should keep the selected unit_id for that item from database as selected
+        }
+    }
+    //var item_select_box = document.getElementById('item-id');
+    window.onload = do_onload();
     
-    function add_row() {
-    var table = document.getElementById("salesOrderTable");
-    var smCount = $('#salesOrderTable tr').length;
-    var no_of_rows = $('#salesOrderTable tr').length;
+  function add_row() {
+    var table = document.getElementById("stockMovementsTable");
+    var smCount = $('#stockMovementsTable tr').length;
+    var no_of_rows = $('#stockMovementsTable tr').length;
     var units= <?php echo json_encode($units); ?>;
     var unit_options = "";
     for(var k in units){
-         unit_options +="<option value='" +k+ "'>" +units[k]+ "</option>"; 
+         unit_options +="<option value='" +k+ "'>" +units[k]+ "</option>";
          }
-    var items= <?php echo json_encode($items); ?>;
+         var items= <?php echo json_encode($items); ?>;
     var item_options = "";
     for(var k in items){
          item_options +="<option value='" +k+ "'>" +items[k]+ "</option>"; 
          }
-    var row = table.insertRow().innerHTML ='<tr> \
+        // console.log("n.i3ur0");
+     var row = table.insertRow().innerHTML ='<tr> \
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
-    <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
-    <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
+    <td><select name ="items[]" onchange="change(this.id)" id=item_id'+(no_of_rows+1)+'>'+item_options+'</select></td> \
+    <td><select name ="units[]" id=unit_id'+(no_of_rows+1)+'>'+unit_options+'</select></td> \
     <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
     <td><input type="number" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
-	<td><span id=amount'+(no_of_rows)+'> </span> </td> \
-	<td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
+    <td><span id=amount'+(no_of_rows)+'> </span></td> \
+    <td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
     </tr>';
-    var item_select_box = document.getElementById('item-id'+no_of_rows);
-    change(item_select_box); 
+    var item_select_box = document.getElementById('item_id'+no_of_rows);
+    change(item_select_box.id);
 }
+
 function deleteRow(row)
 {
     var i=row.parentNode.parentNode.rowIndex;
     document.getElementById("salesOrderTable").deleteRow(i);
 }
-function change(element){ 
-    var item_select_box = document.getElementById(element.id);
-          console.log("element",item_select_box);               
-    
-    //this will give selected dropdown value, that is item_id
-    
-    var selected_value = item_select_box.options[item_select_box.selectedIndex].value;
-    console.log(selected_value);   
-    
-    current_row = element.id[element.id.length -1]
-    console.log("current_row ",current_row);          
+function change(element){     
+            var item_select_box = document.getElementById(element);
+                  console.log("element ",item_select_box);               
+            
+            //this will give selected dropdown value, that is item_id
+            console.log("0ntregewb",element);
+            var selected_value = item_select_box.options[item_select_box.selectedIndex].value;
+            console.log(selected_value);   
+            
+            current_row = element[element.length -1]
+            console.log("current_row ",current_row);          
 
-    
-    if(current_row == "d"){
-        var unit_box=$('#unit-id');
-        unit_box.empty();
-        }else{
-            var unit_select_box=$('#unit-id'+current_row);
-            unit_select_box.empty();        
-            }
-    
-    $.ajax({
-        type: 'get',
-        url: '/sales-orders/getunits',
-        data: { 
-        itemid: selected_value
-        },
-            dataType: 'json',
-                beforeSend: function(xhr) {
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        },
-        success: function(response) 
-            {
-                if (response.error) {
-                alert(response.error);
-                console.log(response.error);
+            
+            if(current_row == 1){
+                var unit_box=$('#unit_id1');
+                unit_box.empty();
+            }else{
+                    var unit_select_box=$('#unit_id'+current_row);
+                    unit_select_box.empty();        
+                 }
+            
+            $.ajax({
+                type: 'get',
+                url: '/stock-movements/getunits',
+                data: { 
+                itemid: selected_value
+                },
+                    dataType: 'json',
+                        beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                },
+                success: function(response) 
+                {
+                    if (response.error) {
+                        alert(response.error);
+                        console.log(response.error);
                 }
-                if (response) {   
-                if(current_row == "d")
-              {
-                for(var k in response){
-                $("#unit-id").append("<option value='" +k+ "'>" +response[k]+ "</option>"); 
-                                        }
-              }  else {
-                 for(var k in response) {
-                  $("#unit-id"+current_row).append("<option value='" +k+ "'>" +response[k]+ "</option>");
-                             }
-                       }      
-                 }   
-              }
-        
-        });
-}
+                    if (response) {   
+                        if(current_row == 1)
+                      {
+                            $('select#something1').empty();
+                        for(var k in response){
+                            console.log($("#unit_id1"));
+                            $("#unit_id1").append("<option value='" +k+ "'>" +response[k]+ "</option>");
+                                                 
+                        }
+                     }else {
+                         for(var k in response) {
+                          $("#unit_id"+current_row).append("<option value='" +k+ "'>" +response[k]+ "</option>");
+                                     }
+                               }      
+                         }   
+                      }
+                
+            });
+        }
         
         function changeCheck(){
           var sales_order_delete = $('#sales_order-id');

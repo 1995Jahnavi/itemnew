@@ -171,7 +171,7 @@ class SalesOrdersController extends AppController
                          //$status = 
 						 $soi_table->save($salesOrderitem);
 						//debug($status);
-						//debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
+						debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
                          $i++;
 					}
                    

@@ -21,9 +21,9 @@
 			$this->Form->templates(
               ['dateWidget' => '{{day}}{{month}}{{year}}']
             );
-            echo $this->Form->control('created_date');
-			
-            echo $this->Form->control('delivary_date');
+             echo $this->Form->control('created_date');
+             echo $this->Form->control('delivary_date');
+            
         ?>
     </fieldset>
     <table id="salesOrderTable">
