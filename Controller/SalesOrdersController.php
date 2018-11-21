@@ -44,6 +44,11 @@ class SalesOrdersController extends AppController
         $salesOrder = $this->SalesOrders->get($id, [
             'contain' => ['SalesOrderItems']
         ]);
+		
+		$customers = TableRegistry::get('Customers');
+		        $salesOrder->salesOrder_id=$salesOrder->id;
+               $salesOrder->customer_name=$customers->get($salesOrder->customer_id)->name;
+			   
 		foreach ($salesOrder->sales_order_items as $salesOrderItems)
 		{
 			     $items = TableRegistry::get('Items');
@@ -137,6 +142,7 @@ class SalesOrdersController extends AppController
             $salesOrder = $this->SalesOrders->patchEntity($salesOrder, $this->request->getData());
             if ($this->SalesOrders->save($salesOrder)) {
                 $soi_table = TableRegistry::get('SalesOrderItems');
+				
                 $i = 0;
                 foreach($data['items'] as $item)
                 {
@@ -150,7 +156,7 @@ class SalesOrdersController extends AppController
                         $soitem->rate= $data['rte'][$i];
                        // $soitem->amount= $data['amt'][$i];
                         $status = $soi_table->save($soitem);
-						debug($status);//die();    
+						//debug($status);//die();    
                     }else{
 						//debug("in else");
                         $salesOrderitem = $soi_table->newEntity();
@@ -160,9 +166,10 @@ class SalesOrdersController extends AppController
                         $salesOrderitem->quantity= $data['qty'][$i];
                         $salesOrderitem->warehouse= $data['warehouses'][$i];
                         $salesOrderitem->rate= $data['rte'][$i];
-                        $salesOrderitem->amount= 0; //$data['amt'][$i];
-						debug($salesOrderitem);
-                        $status = $soi_table->save($salesOrderitem);
+                        //$salesOrderitem->amount= 0; //$data['amt'][$i];
+						//debug($salesOrderitem);
+                         //$status = 
+						 $soi_table->save($salesOrderitem);
 						//debug($status);
 						//debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
                          $i++;
@@ -172,17 +179,17 @@ class SalesOrdersController extends AppController
 				//die();
                 $this->Flash->success(__('The sales order has been saved.'));
                 return $this->redirect(['action' => 'index']);
-            }//else{
-				//$units = TableRegistry::get('Units');
-				//$this->set('units',$units->find('list'));
+            }
+				$units = TableRegistry::get('Units');
+				$this->set('units',$units->find('list'));
 				
-			   // $items_table = TableRegistry::get('Items');
-			   // $this->set('items',$items_table->find('list'));
+			    $items_table = TableRegistry::get('Items');
+			    $this->set('items',$items_table->find('list'));
 				
-			   // $warehouse_table = TableRegistry::get('Warehouses');
-			   // $this->set('warehouses',$warehouse_table->find('list'));
+			    $warehouse_table = TableRegistry::get('Warehouses');
+			    $this->set('warehouses',$warehouse_table->find('list'));
 				$this->Flash->error(__('The sales order could not be saved. Please, try again.'));
-			//}
+			
         }else if($this->request->is('get')){
            // debug($salesOrder);die();
             $units_table = TableRegistry::get('Units');
@@ -194,14 +201,11 @@ class SalesOrdersController extends AppController
             $warehouse_table = TableRegistry::get('Warehouses');
             $this->set('warehouses',$warehouse_table->find('list'));
             
-//             foreach($items_table as $item){
-//                 $item->units = $units_table->find('list')->where(['id IN' => [$item->purchase_unit, $item->sell_unit, $item->usage_unit]]);
-//             }
-        }
+     }
 		$customers = $this->SalesOrders->Customers->find('list', ['limit' => 200]);
         $this->set(compact('salesOrder','customers'));
  
-        $this->set(compact('salesOrder'));
+//$this->set(compact('salesOrder'));
     }
     /**
      * Delete method

@@ -74,7 +74,7 @@
             var item_id_select = $('#item_id'+i);
             console.log("item_id_select ", item_id_select);
             
-            change(item_id_select);
+           change(item_id_select);
             //it should keep the selected unit-id for that item from database as selected
         }
     }

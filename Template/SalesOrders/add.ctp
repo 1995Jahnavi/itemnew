@@ -165,8 +165,17 @@ function calculate_amount(element){
 	}
 	
 }
-
-     
+//function check_date(this) {
+ // var dateForm  = document.forms['date-form'];
+//  var startDate = new Date(dateForm['created_date'].value);
+//  var endDate   = new Date(dateForm['delivary_date'].value);
+//  console.log("dcfjt  ktf dggggggg");
+ // if (startDate >= endDate) {
+//    alert("End Date cannot occur before the Start Date!");
+//  } else {
+//    alert("Success!");
+//  }
+//}
 
 
   </script>
