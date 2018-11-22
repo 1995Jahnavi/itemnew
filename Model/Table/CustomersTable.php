@@ -4,6 +4,7 @@ namespace App\Model\Table;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 
 /**
@@ -55,5 +56,19 @@ class CustomersTable extends Table
             ->notEmpty('name');
 
         return $validator;
+    }
+    
+    public function beforeSave($event, $entity, $options)
+    {
+        
+        $customer_table= TableRegistry::get('Customers');
+        $customer=$customer_table->find('list')->where(['name' =>$entity->name])->count();
+        if($customer > 0)
+        {
+            return false;
+        }
+        
+        //debug($entity);die();
+        
     }
 }

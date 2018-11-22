@@ -4,6 +4,7 @@ namespace App\Model\Table;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 
 /**
@@ -68,10 +69,18 @@ class WarehousesTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
+    
+    public function beforeSave($event, $entity, $options)
     {
-       
-
-        return $rules;
+        
+        $warehouse_table= TableRegistry::get('Warehouses');
+        $warehouse=$warehouse_table->find('list')->where(['name' =>$entity->name])->count();
+        if($warehouse > 0)
+        {
+            return false;
+        }
+        
+        //debug($entity);die();
+        
     }
 }

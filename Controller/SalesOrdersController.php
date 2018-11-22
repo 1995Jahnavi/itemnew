@@ -91,8 +91,21 @@ class SalesOrdersController extends AppController
                     $salesOrderitem->warehouse_id= $data['warehouses'][$i];
                     $salesOrderitem->rate= $data['rte'][$i];
                     //$salesOrderitem->amount= $data['amt'][$i];
-                    $soi->save($salesOrderitem);
-                    $i++;
+                   $status = $soi->save($salesOrderitem);
+				   if($status)
+				   {
+					    $st_table = TableRegistry::get('StockTransactions');
+					    $st = $st_table->newEntity();
+                        $st->item_id= $item;
+                        $st->unit_id= $data['units'][$i];
+                        $st->quantity= $data['qty'][$i];
+                        $st->warehouse_id= $data['warehouses'][$i];
+                        $st->rate= $data['rte'][$i];
+						$st->type=1;
+						$st->transaction_date=$salesOrder->created_date;
+                        $st_table->save($st);					
+				         $i++;
+                   }
                 }
                 
                 $this->Flash->success(__('The sales order has been saved.'));
@@ -169,11 +182,31 @@ class SalesOrdersController extends AppController
                         //$salesOrderitem->amount= 0; //$data['amt'][$i];
 						//debug($salesOrderitem);
                          //$status = 
-						 $soi_table->save($salesOrderitem);
+						 $status=$soi_table->save($salesOrderitem);
 						//debug($status);
-						debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
-                         $i++;
+
+						//debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
+                         //$i++;
+
+						//debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
+                         
+					}if($status){
+					    
+						$st_table = TableRegistry::get('StockTransactions');
+						//$st = $st_table->find('all')->where(['stock_transaction_id'=>$id]);
+					    $st = $st_table->newEntity();
+                        $st->stock_transaction_id=$id;
+					    $st->item_id= $item;
+                        $st->unit_id= $data['units'][$i];
+                        $st->quantity= $data['qty'][$i];
+                        $st->warehouse_id= $data['warehouses'][$i];
+                        $st->rate= $data['rte'][$i];
+						$st->type= 1;
+						$st->transaction_date=$salesOrder->created_date;
+                        $st_table->save($st);
+
 					}
+					$i++;
                    
                 }
 				//die();
@@ -204,9 +237,9 @@ class SalesOrdersController extends AppController
      }
 		$customers = $this->SalesOrders->Customers->find('list', ['limit' => 200]);
         $this->set(compact('salesOrder','customers'));
- 
-//$this->set(compact('salesOrder'));
     }
+//$this->set(compact('salesOrder'));
+    
     /**
      * Delete method
      *
