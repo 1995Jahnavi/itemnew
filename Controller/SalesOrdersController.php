@@ -91,8 +91,21 @@ class SalesOrdersController extends AppController
                     $salesOrderitem->warehouse_id= $data['warehouses'][$i];
                     $salesOrderitem->rate= $data['rte'][$i];
                     //$salesOrderitem->amount= $data['amt'][$i];
-                    $soi->save($salesOrderitem);
-                    $i++;
+                   $status = $soi->save($salesOrderitem);
+				   if($status)
+				   {
+					    $st_table = TableRegistry::get('StockTransactions');
+					    $st = $st_table->newEntity();
+                        $st->item_id= $item;
+                        $st->unit_id= $data['units'][$i];
+                        $st->quantity= $data['qty'][$i];
+                        $st->warehouse_id= $data['warehouses'][$i];
+                        $st->rate= $data['rte'][$i];
+						$st->type=1;
+						$st->transaction_id=$salesOrder->created_date;
+                        $st_table->save($st);					
+				         $i++;
+                   }
                 }
                 
                 $this->Flash->success(__('The sales order has been saved.'));
@@ -169,11 +182,22 @@ class SalesOrdersController extends AppController
                         //$salesOrderitem->amount= 0; //$data['amt'][$i];
 						//debug($salesOrderitem);
                          //$status = 
-						 $soi_table->save($salesOrderitem);
+						 $status=$soi_table->save($salesOrderitem);
 						//debug($status);
 						//debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
-                         $i++;
+                         
+					}if($status){
+						$st_table = TableRegistry::get('StockTransactions');
+					    $st = $st_table->newEntity();
+                        $st->item_id= $item;
+                        $st->unit_id= $data['units'][$i];
+                        $st->quantity= $data['qty'][$i];
+                        $st->warehouse_id= $data['warehouses'][$i];
+                        $st->rate= $data['rte'][$i];
+						$st->type= 1;
+                        $st_table->save($st);
 					}
+					$i++;
                    
                 }
 				//die();

@@ -22,8 +22,9 @@
               ['dateWidget' => '{{day}}{{month}}{{year}}']
             );
             echo $this->Form->control('created_date');
-			
             echo $this->Form->control('delivary_date');
+			
+			
         ?>
     </fieldset>
     <table id="salesOrderTable">
@@ -31,7 +32,7 @@
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
     <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>
     <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this)')); ?></td>        
-    <td><span id='amount'> </span> </td>     
+    <td><span id='amount'></span></td>     
     <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td>   
     </tr>
     <input type= "button" onclick= "add_row()" value= "Add row" > 
@@ -165,17 +166,6 @@ function calculate_amount(element){
 	}
 	
 }
-//function check_date(this) {
- // var dateForm  = document.forms['date-form'];
-//  var startDate = new Date(dateForm['created_date'].value);
-//  var endDate   = new Date(dateForm['delivary_date'].value);
-//  console.log("dcfjt  ktf dggggggg");
- // if (startDate >= endDate) {
-//    alert("End Date cannot occur before the Start Date!");
-//  } else {
-//    alert("Success!");
-//  }
-//}
 
 
   </script>

@@ -72,8 +72,8 @@
         for(var i=1; i<smCount;i++){
             console.log("iiiiii ", $('#item_id'+i));
             var item_id_select = $('#item_id'+i);
+            var item_id_select = $('#item_id'+i).attr('id');
             console.log("item_id_select ", item_id_select);
-            
            change(item_id_select);
             //it should keep the selected unit-id for that item from database as selected
         }
