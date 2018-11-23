@@ -102,8 +102,9 @@ class SalesOrdersController extends AppController
                         $st->warehouse_id= $data['warehouses'][$i];
                         $st->rate= $data['rte'][$i];
 						$st->type=1;
+						$st->referenceid=$salesOrder->id;
 						$st->transaction_date=$salesOrder->created_date;
-                        $st_table->save($st);					
+						$st_table->save($st);					
 				         $i++;
                    }
                 }
@@ -151,64 +152,89 @@ class SalesOrdersController extends AppController
             'contain' => ['SalesOrderItems']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-			//debug($data);
+//debug($data);die();
             $salesOrder = $this->SalesOrders->patchEntity($salesOrder, $this->request->getData());
             if ($this->SalesOrders->save($salesOrder)) {
                 $soi_table = TableRegistry::get('SalesOrderItems');
-				
+                $st_table = TableRegistry::get('StockTransactions');
                 $i = 0;
                 foreach($data['items'] as $item)
                 {
                     $soitem = $soi_table->find('all')->where(['item_id'=>$item, 'sales_order_id'=>$id])->first();
-					//debug($soitem);
+                    //debug($soitem);die();
                     if(!is_null($soitem)){
                         $soitem->item_id= $item;
                         $soitem->unit_id= $data['units'][$i];
                         $soitem->quantity= $data['qty'][$i];
                         $soitem->warehouse_id= $data['warehouses'][$i];
                         $soitem->rate= $data['rte'][$i];
-                       // $soitem->amount= $data['amt'][$i];
                         $status = $soi_table->save($soitem);
-						//debug($status);//die();    
-                    }else{
-						//debug("in else");
+                        
+                     // debug($status); die();
+                     if($status)
+                     {  
+                         //debug($status); die();
+                        $stitem = $st_table->find('all')->where(['item_id'=>$item,'referenceid'=>$id])->first();
+                        //debug($stitem); die();
+                        $stitem->item_id= $item;
+                        //debug($stitem); die();
+                        $stitem->unit_id= $data['units'][$i];
+                        $stitem->quantity= $data['qty'][$i];
+                        $stitem->warehouse_id= $data['warehouses'][$i];
+                       //debug($stitem); die();
+                        $stitem->rate= $data['rte'][$i];
+                        $stitem->type=1;
+                        //debug($stitem);die();
+                        $stitem->referenceid=$salesOrder->id;
+                        $stitem->transaction_date=$salesOrder->created_date;
+                        $status= $st_table->save($stitem);
+                        
+                       //debug($status); die();
+                    }
+                    }
+                    
+               else{
+                        debug("in else");
                         $salesOrderitem = $soi_table->newEntity();
                         $salesOrderitem->sales_order_id= $id;
                         $salesOrderitem->item_id= $item;
+                      //  debug($salesOrderitem);die();
                         $salesOrderitem->unit_id= $data['units'][$i];
                         $salesOrderitem->quantity= $data['qty'][$i];
-                        $salesOrderitem->warehouse= $data['warehouses'][$i];
+                        $salesOrderitem->warehouse_id= $data['warehouses'][$i];
                         $salesOrderitem->rate= $data['rte'][$i];
-                        //$salesOrderitem->amount= 0; //$data['amt'][$i];
-						//debug($salesOrderitem);
-                         //$status = 
-						 $status=$soi_table->save($salesOrderitem);
-						//debug($status);
-
-						//debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
-                         //$i++;
-
-						//debug("fffffffffffff ".$salesOrderitem->getErrors());die();                        
-                         
-					}if($status){
-					    
-						$st_table = TableRegistry::get('StockTransactions');
-						//$st = $st_table->find('all')->where(['stock_transaction_id'=>$id]);
-					    $st = $st_table->newEntity();
-                        $st->stock_transaction_id=$id;
-					    $st->item_id= $item;
-                        $st->unit_id= $data['units'][$i];
-                        $st->quantity= $data['qty'][$i];
-                        $st->warehouse_id= $data['warehouses'][$i];
-                        $st->rate= $data['rte'][$i];
-						$st->type= 1;
-						$st->transaction_date=$salesOrder->created_date;
-                        $st_table->save($st);
-
-					}
-					$i++;
-                   
+                        //debug($salesOrderitem);die();
+                        $status=$soi_table->save($salesOrderitem);   
+                       // debug($status); die();
+                        if($status)
+                        {
+                            debug("in if");
+                            //$st_table = TableRegistry::get('StockTransactions');
+                            $st = $st_table->newEntity();
+                            $st->item_id= $item;
+                            //debug($st); die();
+                            $st->unit_id= $data['units'][$i];
+                            //debug($st); die();
+                            $st->quantity= $data['qty'][$i];
+                            $st->warehouse_id= $data['warehouses'][$i];
+                            $st->rate= $data['rte'][$i];
+                            $st->type=1;
+                            //debug($st); die();
+                            $st->referenceid=$salesOrder->id;
+                            $st->transaction_date=$salesOrder->created_date;
+                            $status=$st_table->save($st);
+                           // debug($status); 
+                           
+                           // die();
+                        }
+               }
+                  
+                 
+                  $i++;
                 }
+                   
+                
+                
 				//die();
                 $this->Flash->success(__('The sales order has been saved.'));
                 return $this->redirect(['action' => 'index']);
@@ -223,7 +249,7 @@ class SalesOrdersController extends AppController
 			    $this->set('warehouses',$warehouse_table->find('list'));
 				$this->Flash->error(__('The sales order could not be saved. Please, try again.'));
 			
-        }else if($this->request->is('get')){
+        } else if($this->request->is('get')){
            // debug($salesOrder);die();
             $units_table = TableRegistry::get('Units');
             $this->set('units',$units_table->find('list'));

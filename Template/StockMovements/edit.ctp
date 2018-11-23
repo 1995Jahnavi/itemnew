@@ -77,13 +77,11 @@
         console.log('afasfasf111111 ',smCount);        
         for(var i=1; i<smCount;i++){
             console.log("iiiiii ", $('#item_id'+i));
-<<<<<<< HEAD
-=======
+
             var item_id_select = $('#item_id'+i);
->>>>>>> f8d84971dd8fa15786787234c9ce0cd30ba3ed44
             var item_id_select = $('#item_id'+i).attr('id');
             console.log("item_id_select ", item_id_select);
-           change(item_id_select);
+            change(item_id_select);
             //it should keep the selected unit_id for that item from database as selected
         }
     }

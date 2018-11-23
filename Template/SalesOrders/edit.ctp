@@ -44,7 +44,7 @@
     ?>
     <tr>
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$salesOrderItems->id)); ?></td>
-    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this)')); ?></td>
+    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this)','disabled'=>true)); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]','id'=>$unitid,'default'=>$salesOrderItems->unit_id)); ?></td>
     <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','id'=>$quantity,'required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->quantity)); ?></td>
     <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','id'=>$rate,'required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->rate)); ?></td>
