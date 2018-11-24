@@ -45,6 +45,7 @@
 
 <script>
     var item_select_box = document.getElementById('item-id');
+    console.log("bwy7ecwil",item_select_box);
     window.onload = change(item_select_box);
     
     function add_row() {
