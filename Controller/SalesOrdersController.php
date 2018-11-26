@@ -2,6 +2,7 @@
 namespace App\Controller;
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
+use PhpParser\Node\Stmt\Foreach_;
 /**
  * SalesOrders Controller
  *
@@ -208,7 +209,7 @@ class SalesOrdersController extends AppController
                        // debug($status); die();
                         if($status)
                         {
-                            debug("in if");
+                           // debug("in if");
                             //$st_table = TableRegistry::get('StockTransactions');
                             $st = $st_table->newEntity();
                             $st->item_id= $item;
@@ -223,9 +224,9 @@ class SalesOrdersController extends AppController
                             $st->referenceid=$salesOrder->id;
                             $st->transaction_date=$salesOrder->created_date;
                             $status=$st_table->save($st);
-                           // debug($status); 
+                            //debug($status); 
                            
-                           // die();
+                            //die();
                         }
                }
                   
@@ -289,7 +290,7 @@ public function getunits()
     $this->RequestHandler->respondAs('json');
     $this->response->type('application/json');
     $this->autoRender = false ;
-    //  debug($itemid);die();
+     // debug($itemid);die();
     $itemid = $this->request->query();
     
     $items_table = TableRegistry::get('Items');
@@ -314,25 +315,38 @@ public function getitems()
     $this->response->type('application/json');
     $this->autoRender = false ;
     $array = $this->request->data();
-    //     debug($array);die();
-    //$id= $this->StockMovements->get($id);
-    $ids=$array['salesorderid'];
-    //debug($arrays['id']);die();
-    
-    
+  // debug($array);die();    //$id= $this->StockMovements->get($id);
+   
+    $ids=$array['sales_order_item_id'];
     $this->set('ids', $ids);
+   // debug($ids);die();
     $salesOrderItems_table = TableRegistry::get('SalesOrderItems');
-    foreach ($ids as $id){
-        $soitem = $salesOrderItems_table->get($id);
-        $salesOrderItems_table->delete($soitem);
-    }
     
+    $status = true;
+    foreach ($ids as $id){
+       $soitem = $salesOrderItems_table->get($id);
+       $status = $salesOrderItems_table->delete($soitem);
+       if($status){
+          $stockTransactions_table = TableRegistry::get('StockTransactions');
+          $stoct_transaction = $stockTransactions_table->find('all')->where(['item_id'=>$soitem->item_id, 'referenceid'=>$soitem->sales_order_id])->first();
+          $status = $stockTransactions_table->delete($stoct_transaction);
+          if($status){
+              $status = true;
+          }else{
+              $status = false;
+              break;
+          }
+       }else{
+           $status = false;
+           break;
+       }
+    }
+    $this->Flash->success(__('The sales order has been deleted.'));
     
     $this->RequestHandler->renderAs($this, 'json');
-    
-    $resultJ = json_encode($soitem);
+        
     $this->response->type('json');
-    $this->response->body($resultJ);
+    $this->response->body($status);
     return $this->response;
 }
 }

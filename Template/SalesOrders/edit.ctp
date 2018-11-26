@@ -45,8 +45,8 @@
     ?>
     <tr>
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$salesOrderItems->id)); ?></td>
-    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this)','disabled'=>true)); ?></td>
-    <td><?php echo $this->Form->control('item_id',array('type'=>'hidden','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this)')); ?></td>
+    <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this.id)','disabled'=>true)); ?></td>
+    <td><?php echo $this->Form->control('item_id',array('type'=>'hidden','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this.id)')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]','id'=>$unitid,'default'=>$salesOrderItems->unit_id)); ?></td>
     <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','id'=>$quantity,'required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->quantity)); ?></td>
     <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','id'=>$rate,'required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->rate)); ?></td>
@@ -57,16 +57,15 @@
     $index++;
     }
     ?>
-    <input type= "button" onclick= "add_row()" value= "Add row" > 
+    <input type= "button" onclick= "add_row();hide_submit()" value= "Add row"> 
     <input type="button" id="delsmbutton" value="Delete" onclick="changeCheck()" >
     </table>
-    <?= $this->Form->button(__('Submit')) ?>
+    <button type="submit" value="Submit" id="btn_submit">Submit</button>
     <?= $this->Form->end() ?>
 </div>
  <script src="/js/jquery-3.3.1.min.js"></script>
 
 <script>
-
     function do_onload(){
     console.log('afasfasf111111');
     var item_select_box = document.getElementById('item_id');
@@ -77,20 +76,21 @@
     for(var i=1; i<=smCount; i++)
         {
           //console.log(i, smCount);
-            console.log("iiiiii ", $('#item_id'+i).attr('id'));
-            var item_id_select = $('#item_id'+i).attr('id');
-            console.log("item_id_select",item_id_select);
-            change(item_id_select);
+            //console.log("iiiiii ", $('#item_id'+i).attr('id'));
+            var item_id = $('#item_id'+i).attr('id');
+            console.log("item_id",item_id);
+            change(item_id);
             //it should keep the selected unit-id for that item from database as selected
         }
     }
     window.onload = do_onload();
-    
+   // window.onload = hide_submit();
     
     function add_row() {
     var table = document.getElementById("salesOrderTable");
     var smCount = $('#salesOrderTable tr').length;
     var no_of_rows = $('#salesOrderTable tr').length;
+    console.log("no_of_rows ", no_of_rows);
     var units= <?php echo json_encode($units); ?>;
     var unit_options = "";
     for(var k in units){
@@ -101,18 +101,26 @@
     for(var k in items){
          item_options +="<option value='" +k+ "'>" +items[k]+ "</option>"; 
          }
+    var warehouses= <?php echo json_encode($warehouses); ?>;
+    var warehouse_options = "";
+    for(var k in warehouses){
+         warehouse_options +="<option value='" +k+ "'>" +warehouses[k]+ "</option>"; 
+         }
+         
     var row = table.insertRow().innerHTML ='<tr> \
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
-    <td><select name ="items[]"  onchange="change(this)" id=item_id'+(no_of_rows+1)+'>'+item_options+'</select></td> \
+    <td><select name ="items[]" onchange="change(this.id)" id=item_id'+(no_of_rows+1)+'>'+item_options+'</select></td> \
     <td></td> \
     <td><select name ="units[]" id=unit_id'+(no_of_rows+1)+'>'+unit_options+'</select></td> \
     <td><input type="number" name ="qty[]" id=quantity_id'+(no_of_rows+1)+' onchange="calculate_amount(this)"></td> \
     <td><input type="number" name ="rte[]" id=rate_id'+(no_of_rows+1)+' onchange="calculate_amount(this)"></td> \
     <td><span id=amount'+(no_of_rows+1)+'></span></td> \
-    <td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]', 'id'=>'warehouse_id')); ?></td> \
-    </tr>'
-    var item_select_box = document.getElementById('item_id'+no_of_rows);
-    change(item_select_box); 
+    <td><select name ="warehouses[]" id=warehouse_id'+(no_of_rows+1)+'>'+warehouse_options+'</select></td> \
+    </tr>';
+    var item_select_box = document.getElementById('item_id'+(no_of_rows+1));
+    console.log("1111qqqqqqq",item_select_box);
+    change(item_select_box.id);
+     
 }
 function deleteRow(row)
 {
@@ -120,15 +128,17 @@ function deleteRow(row)
     document.getElementById("salesOrderTable").deleteRow(i);
 }
 
-    function change(element){ 
-    var item_select_box = document.getElementById(element);
-     //console.log("element",item_select_box);    
+function change(id){ 
+    console.log("element in change ", id);
+    var item_select_box = document.getElementById(id);
+    console.log("item_select_box ",item_select_box);    
     //this will give selected dropdown value, that is item_id
     var selected_value = item_select_box.options[item_select_box.selectedIndex].value;
     //var selectedValue = item_select_box.value();
     
+    
     console.log(selected_value);
-    current_row = element[element.length -1]
+    current_row = id[id.length -1]
     console.log("current_row ",current_row);
         
     if(current_row =="1"){
@@ -140,7 +150,6 @@ function deleteRow(row)
         var unit_select_box=$('#unit_id'+current_row);
         unit_select_box.empty();                
     }
-
     $.ajax({
         type: 'get',
         url: '/sales-orders/getunits',
@@ -180,8 +189,6 @@ function deleteRow(row)
         
         });
   }
-
-
 function changeCheck(){
           var sales_order_delete = $('#sales_order-id');
          
@@ -207,13 +214,13 @@ function changeCheck(){
                  
               });
               if(checkids.length > 0){    
-    console.log(checkids);   
+   // console.log(checkids);   
     $.ajax({type:"POST",
                 async: true,
                 cache: false,
                 url: '/sales-orders/getitems',
                 data: { 
-                    salesorderid: checkids
+                   sales_order_item_id:checkids
                 },
            dataType: 'json',
                 beforeSend: function(xhr) {
@@ -234,17 +241,19 @@ function changeCheck(){
                
                //delete the checkbox closest parent tr
                checkids.forEach(function(entry) {
-                    console.log(entry);
+                   // console.log(entry);
                     var chkbox = $('#'+entry);
                     chkbox.closest("tr").remove();
-                });            
-               
-               }  
+                });               }  
            }
         });
         }
+            alert("selected row is deleted"); 
+        
       }
-      function calculate_amount(element){     
+    
+    function calculate_amount(element){     
+    
     var input_box = document.getElementById(element.id);
     console.log("element ",input_box);
     //var rate_box = document.getElementById("rate"+1);
@@ -269,7 +278,6 @@ function changeCheck(){
         console.log("in else");
         current_row = element.id[element.id.length -1]
         console.log("current_row ",current_row); 
-
         var qty_box = document.getElementById("quantity_id"+current_row);
         var rate_box = document.getElementById("rate_id"+current_row);
         var amount = qty_box.value * rate_box.value;
@@ -278,4 +286,28 @@ function changeCheck(){
     }
       }
       
+      
+    function hide_submit(){
+         var no_of_rows = $('#salesOrderTable tr').length;
+         console.log("no of row in hide_submit function",no_of_rows);
+         if(no_of_rows == 0){
+         var sub_btn=$('#btn_submit');
+         sub_btn.hide();
+         }
+         else{
+         var sub_btn=$('#btn_submit');
+         sub_btn.show();
+         }
+     }
+      window.onload = hide_submit();
+    
+    function check_date(){
+    var created_date=$('#created_date');
+    var delivery_date=$('#delivary_date');
+    if(create_date<delivery_date)
+    {
+     alert("created date cannot be smaller than the delivery date");
+     }
+    }
+     
 </script>

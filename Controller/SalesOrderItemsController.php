@@ -20,9 +20,12 @@ class SalesOrderItemsController extends AppController
      */
     public function index()
     {
+           
+        
         $this->paginate = [
             'contain' => ['SalesOrders', 'Items', 'Units', 'Warehouses']
         ];
+        $this->paginate['order'] = ['id' => 'DESC'];
         $salesOrderItems = $this->paginate($this->SalesOrderItems);
 
         $this->set(compact('salesOrderItems'));
