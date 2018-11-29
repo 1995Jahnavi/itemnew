@@ -16,12 +16,11 @@
     </ul>
 </nav>
 <div class="salesOrders view large-9 medium-8 columns content">
+    <button type="submit" value="Submit" id="pdf_submit" onclick="print_pdf()" target="">Print Pdf</button>
+    <input type="hidden" name="soid" id="soid" value="<?php echo $salesOrder->id ?>">
     <h3><?= h($salesOrder->id) ?></h3>
+
     <table class="vertical-table">
-        <tr>
-            <th scope="row"><?= __('Id') ?></th>
-            <td><?= $this->Number->format($salesOrder->id) ?></td>
-        </tr>
         <tr>
             <th scope="row"><?= __('Customer Name') ?></th>
             <td><?= $salesOrder->customer_name ?></td>
@@ -93,5 +92,12 @@
 		
 		window.onload = do_onload();
 
+    function print_pdf(){
+    
+    var ppdf=document.getElementById("pdf_submit");
+    var soid = $("#soid").val();
+        //window.location.href = "http://localhost:8765/sales-orders/generatepdf?id="+$("#soid").val();
+        window.open("http://localhost:8765/sales-orders/generatepdf?id="+soid);
+    }
    
-   </script>
+   </script> 

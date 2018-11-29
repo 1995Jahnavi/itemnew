@@ -18,12 +18,15 @@
         <legend><?= __('Add Sales Order') ?></legend>
         <?php
             echo $this->Form->control('customer_id',array('type'=>'select','options'=>$customers));
-			$this->Form->templates(
-              ['dateWidget' => '{{day}}{{month}}{{year}}']
-            );
-             echo $this->Form->control('created_date');
-             echo $this->Form->control('delivary_date');
-        ?>
+			//$this->Form->templates(
+         //     ['dateWidget' => '{{day}}{{month}}{{year}}']
+         //   );
+           //  echo $this->Form->control('created_date');
+           //  echo $this->Form->control('delivary_date');
+      //  ?>
+        created date<input type="date" id="created_date" name="created_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->created_date)) ?>">
+        delivery date<input type="date" id="delivery_date"  name="delivary_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->delivary_date)) ?>" onchange="check_date()">
+        
     </fieldset>
     <table id="salesOrderTable">
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>'chk')); ?></td>
@@ -67,8 +70,8 @@
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
     <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
-    <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
-    <td><input type="number" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)"></td> \
+    <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this)" required="true"></td> \
+    <td><input type="number" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this)" required="true"></td> \
     <td><span id=amount'+(no_of_rows)+'> </span> </td> \
     <td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
     </tr>';
@@ -89,19 +92,19 @@ function deleteRow(row)
             
             var selected_value = item_select_box.options[item_select_box.selectedIndex].value;
             console.log(selected_value);   
-            
-            current_row = element.id[element.id.length -1]
-            console.log("current_row ",current_row);          
-
-            
-            if(current_row == "d"){
-                var unit_box=$('#unit-id');
+            console.log(element.id);
+            var element_id= element.id.replace(/[^0-9]/g, '');
+            console.log("121212121 ",element_id);
+          
+          if(element_id == ""){
+          var unit_box=$('#unit-id');
                 unit_box.empty();
-            }else{
-                    var unit_select_box=$('#unit-id'+current_row);
-                    unit_select_box.empty();        
+            }
+            if(element_id>=1){
+                 var unit_select_box=$('#unit-id'+element_id);
+                 unit_select_box.empty();
                  }
-            
+                 
             $.ajax({
                 type: 'get',
                 url: '/stock-movements/getunits',
@@ -116,23 +119,26 @@ function deleteRow(row)
                 {
                     if (response.error) {
                         alert(response.error);
-                        console.log(response.error);
+                        //console.log(response.error);
                 }
-                    if (response) {   
-                        if(current_row == "d")
+                if (response) {
+                if(element_id == "")
                       {
-                        for(var k in response){
+                        for(var k in response)
+                        {
                         $("#unit-id").append("<option value='" +k+ "'>" +response[k]+ "</option>"); 
-                                     }
-                     }else {
-                         for(var k in response) {
-                          $("#unit-id"+current_row).append("<option value='" +k+ "'>" +response[k]+ "</option>");
-                                     }
-                               }      
-                         }   
+                          }
+                              console.log("ddddddddddd","#unit-id");
                       }
-                
-            });console.log("vqwugc");
+                      if(element_id>=1){
+                         for(var k in response) {
+                          $("#unit-id"+element_id).append("<option value='" +k+ "'>" +response[k]+ "</option>");
+                              }
+                           console.log("else","#unit-id"+element_id);
+                         }
+                }
+              }  
+            });
         }
         
         function changeCheck(){
@@ -199,40 +205,46 @@ function deleteRow(row)
       }
       
         
-function calculate_amount(element){     
+  function calculate_amount(element){     
 	var input_box = document.getElementById(element.id);
 	console.log("element ",input_box);
-	//var rate_box = document.getElementById("rate"+1);
-	console.log("rate_box");
-	//substring qty.id, get last number
-	
-		current_row = element.id[element.id.length -1] 
-		console.log("current_row ",current_row); 	
-	if(current_row == "y" || current_row == "e"){
-		var rate_box = "";
-		if(current_row == "y"){
-			var rate_box = document.getElementById("rate");
-			var amount = input_box.value * rate_box.value;
-			console.log("rrrrrrr ",rate_box.value);
-		}else{
-			var qty_box = document.getElementById("quantity");
-			var amount = input_box.value * qty_box.value;
-		}    
-		console.log("hjhjhjh ", amount);
-		$('#amount').html(amount); 
-	}else{
-		console.log("in else");
-		current_row = element.id[element.id.length -1]
-		console.log("current_row ",current_row); 
-
-		var qty_box = document.getElementById("quantity-id"+current_row);
-		var rate_box = document.getElementById("rate-id"+current_row);
-		var amount = qty_box.value * rate_box.value;
-		console.log(amount);
-		$('#amount'+current_row).html(amount);
-	}
-	
+	var element_id= element.id.replace(/[^0-9]/g, '');
+	console.log("calculate amount ",element_id);
+	if(element_id == ""){
+	        var rate_box = document.getElementById("rate");
+            var amount = input_box.value * rate_box.value;
+            console.log("rrrrrrr ",rate_box.value);
+            $('#amount').html(amount);
+            }
+            else{
+            var qty_box = document.getElementById("quantity");
+            var amount = input_box.value * qty_box.value;
+            console.log("123123123 ",qty_box.value);  
+            $('#amount').html(amount);        
+            }
+     if(element_id>=1){
+        var qty_box = document.getElementById("quantity_id"+element_id);
+        var rate_box = document.getElementById("rate_id"+element_id);
+        var amount = qty_box.value * rate_box.value;
+            $('#amount'+element_id).html(amount);    
+      }
 }
+
+ function check_date(){
+        var created_date = $("#created_date").val();
+        var delivery_date = $("#delivery_date").val();
+       // var date1 = new Date(01,01,2018);
+      //  var date2 = new Date(31,12,2018);
+       // console.log("date validation",date2);
+        if(delivery_date > created_date)
+        {
+        window.alert("date entered is valid");
+        }
+        else{
+        //console.log("cbwu2222222222222",date2);
+        window.alert("date entered is invalid, delivery date cannot be earlier then created date");
+        }
+    }
 
 
   </script>

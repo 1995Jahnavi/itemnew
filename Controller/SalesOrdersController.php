@@ -3,6 +3,8 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use PhpParser\Node\Stmt\Foreach_;
+use Setasign\Fpdf;
+
 /**
  * SalesOrders Controller
  *
@@ -12,6 +14,15 @@ use PhpParser\Node\Stmt\Foreach_;
  */
 class SalesOrdersController extends AppController
 {
+    
+    
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('RequestHandler');
+    }
+    
+    
     /**
      * Index method
      *
@@ -19,13 +30,13 @@ class SalesOrdersController extends AppController
      */
     public function index()
     {   $this->paginate['order'] = ['id' => 'DESC'];
-        $salesOrders = $this->paginate($this->SalesOrders);
+        $salesOrders =$this->paginate($this->SalesOrders);
         
 		foreach($salesOrders as $salesOrder){
 			        //debug($salesOrder->customer_id);die();
 
-		        $customers = TableRegistry::get('Customers');
-		        $salesOrder->salesOrder_id=$salesOrder->id;
+		       $customers = TableRegistry::get('Customers');
+		       $salesOrder->salesOrder_id=$salesOrder->id;
                $salesOrder->customer_name=$customers->get($salesOrder->customer_id)->name;
 				
 		} 
@@ -73,7 +84,8 @@ class SalesOrdersController extends AppController
      */
     public function add()
     {
-        $data = $this->request->getData();         
+        $data = $this->request->getData(); 
+       // debug($data);die();
         $salesOrder = $this->SalesOrders->newEntity();
         
         if ($this->request->is('post')) {
@@ -153,7 +165,7 @@ class SalesOrdersController extends AppController
             'contain' => ['SalesOrderItems']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-//debug($data);die();
+// debug($data);die();
             $salesOrder = $this->SalesOrders->patchEntity($salesOrder, $this->request->getData());
             if ($this->SalesOrders->save($salesOrder)) {
                 $soi_table = TableRegistry::get('SalesOrderItems');
@@ -348,5 +360,94 @@ public function getitems()
     $this->response->type('json');
     $this->response->body($status);
     return $this->response;
+}
+
+
+public function generatepdf()
+{
+    $this->RequestHandler->respondAs('json');
+    $this->response->type('application/json');
+    $this->autoRender = false ;
+    $id = $this->request->query()['id'];
+    $salesOrders_table = TableRegistry::get('SalesOrders');
+    $so = $salesOrders_table->get($id, [
+        'contain' => ['SalesOrderItems']
+    ]);
+  
+    $width_cell=array(20,35,30,25,20,30,35);
+    $width_cell1=array(50,200);
+     $pdf = new \FPDF();
+     $pdf->AddPage();
+     
+    // $pdf->Cell(40,10,'Sales Order report',0,2,'zzzzzzz');
+     $customers = TableRegistry::get('Customers');
+     $custmrs = $customers->get($so->customer_id);
+     $so->customer_name = $custmrs->name;
+     
+     $pdf->SetFont('Arial','B',14);
+     
+     $pdf->Cell($width_cell1[0],10,'Customer Name:',0,0,'C',false);
+     $pdf->Cell($width_cell1[1],10,$so->customer_name,0,1,'C',false);
+     
+     $pdf->Cell($width_cell1[0],10,' Created date:',0,0,'C',false);
+     $pdf->Cell($width_cell1[1],10,$so->created_date,0,1,'C',false);
+     
+     $pdf->Cell($width_cell1[0],10,'Delivery date:',0,0,'C',false);
+     $pdf->Cell($width_cell1[1],10,$so->delivery_date,0,1,'C',false); 
+     $pdf->Ln();
+     $pdf->SetFont('Arial','B',20);
+     $pdf->Cell(120,10,'Related Sales Order Items',0,1,'R');
+     $pdf->Ln();
+     $pdf->SetFont('Arial','B',15);
+     $pdf->Cell($width_cell[0],10,'Id',1,0,'C',false); // First column of row 1
+     $pdf->Cell($width_cell[1],10,'Item',1,0,'C',false); // First column of row 1
+     $pdf->Cell($width_cell[2],10,'Unit',1,0,'C',false);
+     $pdf->Cell($width_cell[6],10,'Warehouse',1,0,'C',false); // First column of row 1 // First column of row 1
+     $pdf->Cell($width_cell[3],10,'Quantity',1,0,'C',false); // First column of row 1
+     $pdf->Cell($width_cell[4],10,'Rate',1,0,'C',false); // First column of row 1
+     $pdf->Cell($width_cell[5],10,'Amount',1,1,'C',false); // First column of row 1
+     
+     
+
+     $width_cell1=array(20,35,30,25,20,30,35);    
+     $i=0;
+     foreach ($so->sales_order_items as $salesOrderItem)
+     {
+       
+         $items = TableRegistry::get('Items');
+         $salesOrderItem->salesOrder_id=$so->id;
+         $salesOrderItem->item_name=$items->get($salesOrderItem->item_id)->item_name;
+         
+         $units = TableRegistry::get('Units');
+         $salesOrderItem->salesOrder_id=$so->id;
+         $salesOrderItem->unit_name=$units->get($salesOrderItem->unit_id)->unit_name;
+         
+         $warehouses = TableRegistry::get('Warehouses');
+         $salesOrderItem->salesOrder_id=$so->id;
+         $salesOrderItem->warehouse_name=$warehouses->get($salesOrderItem->warehouse_id)->name;
+         // debug($salesOrderItem);die();
+         $amount = $salesOrderItem->quantity * $salesOrderItem->rate;
+         // debug($salesOrderItem->quantity);debug($salesOrderItem->rate);die();
+         $pdf->SetFont('Arial','B',14);
+         $pdf->Cell($width_cell1[0],10,$salesOrderItem->id,1,0,'C',false); // First column of row 1
+         $pdf->Cell($width_cell1[1],10,$salesOrderItem->item_name,1,0,'C',false);
+         $pdf->Cell($width_cell1[2],10,$salesOrderItem->unit_name,1,0,'C',false);
+         $pdf->Cell($width_cell1[6],10,$salesOrderItem->warehouse_name,1,0,'C',false);
+         $pdf->Cell($width_cell1[3],10,$salesOrderItem->quantity,1,0,'C',false);
+         $pdf->Cell($width_cell1[4],10,$salesOrderItem->rate,1,0,'C',false);
+         $pdf->Cell($width_cell1[5],10,$amount,1,1,'C',false);
+         $i++;         
+     }
+     $pdf->Output();
+     
+    
+   $this->RequestHandler->renderAs($this, 'pdf');
+    
+//     $resultJ = json_encode($soitem);
+//     $this->response->type('json');
+//     $this->response->body($resultJ);
+//     return $this->response;
+
+//      $this->render('pdf');
 }
 }

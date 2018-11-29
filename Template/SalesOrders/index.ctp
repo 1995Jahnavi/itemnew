@@ -25,6 +25,7 @@
             </tr>
         </thead>
         <tbody>
+        
             <?php foreach ($salesOrders as $salesOrder): ?>
             <tr>
                 <td><?= $this->Number->format($salesOrder->id) ?></td>

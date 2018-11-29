@@ -4,6 +4,7 @@
  * @var \App\Model\Entity\SalesOrder $salesOrder
  */
 ?>
+<div class="message success success-message" onclick="this.classList.add('hidden')">The purchase order has been saved.</div>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
@@ -19,17 +20,20 @@
     </ul>
 </nav>
 <div class="salesOrders form large-9 medium-8 columns content">
-    <?= $this->Form->create($salesOrder) ?>
+    <?= $this->Form->create($salesOrder , array('id' => 'myForm')) ?>
     <fieldset>
         <legend><?= __('Edit Sales Order') ?></legend>
         <?php
             echo $this->Form->control('customer_id',array('type'=>'select','options'=>$customers));
-            $this->Form->templates(
-              ['dateWidget' => '{{day}}{{month}}{{year}}']
-            );
-            echo $this->Form->control('created_date');
-            echo $this->Form->control('delivary_date');
+            //$this->Form->templates(
+             // ['dateWidget' => '{{day}}{{month}}{{year}}']
+           // );
+            //echo $this->Form->control('created_date',array('id'=>'created_date'));
+            //echo $this->Form->control('delivary_date',array('id'=>'delivary_date'));
         ?>
+        created date<input type="date" id="created_date" name="created_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->created_date)) ?>">
+        delivery date<input type="date" id="delivery_date"  name="delivary_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->delivary_date)) ?>" onchange="check_date()">
+        
     </fieldset>
     <table id="salesOrderTable">
     <?php
@@ -48,8 +52,8 @@
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this.id)','disabled'=>true)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'hidden','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this.id)')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]','id'=>$unitid,'default'=>$salesOrderItems->unit_id)); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','id'=>$quantity,'required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->quantity)); ?></td>
-    <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','id'=>$rate,'required' => true,'onchange'=>'calculate_amount(this)','default'=>$salesOrderItems->rate)); ?></td>
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','id'=>$quantity,'required' => true,'onchange'=>'calculate_amount(this.id)','default'=>$salesOrderItems->quantity)); ?></td>
+    <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','id'=>$rate,'required' => true,'onchange'=>'calculate_amount(this.id)','default'=>$salesOrderItems->rate)); ?></td>
     <td><span id="<?php echo $amount ;?>"></span></td>
     <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]','id'=>$warehouse,'default'=>$salesOrderItems->warehouse)); ?></td>
     </tr>
@@ -57,7 +61,7 @@
     $index++;
     }
     ?>
-    <input type= "button" onclick= "add_row();hide_submit()" value= "Add row"> 
+    <input type= "button" onclick= "add_row();hide_submit()"  value= "Add row"> 
     <input type="button" id="delsmbutton" value="Delete" onclick="changeCheck()" >
     </table>
     <button type="submit" value="Submit" id="btn_submit">Submit</button>
@@ -97,7 +101,7 @@
          unit_options +="<option value='" +k+ "'>" +units[k]+ "</option>"; 
          }
     var items= <?php echo json_encode($items); ?>;
-    var item_options = "";
+    var item_options = "";//
     for(var k in items){
          item_options +="<option value='" +k+ "'>" +items[k]+ "</option>"; 
          }
@@ -112,8 +116,8 @@
     <td><select name ="items[]" onchange="change(this.id)" id=item_id'+(no_of_rows+1)+'>'+item_options+'</select></td> \
     <td></td> \
     <td><select name ="units[]" id=unit_id'+(no_of_rows+1)+'>'+unit_options+'</select></td> \
-    <td><input type="number" name ="qty[]" id=quantity_id'+(no_of_rows+1)+' onchange="calculate_amount(this)"></td> \
-    <td><input type="number" name ="rte[]" id=rate_id'+(no_of_rows+1)+' onchange="calculate_amount(this)"></td> \
+    <td><input type="number" name ="qty[]" id=quantity_id'+(no_of_rows+1)+' onchange="calculate_amount(this.id)" required="true"></td> \
+    <td><input type="number" name ="rte[]" id=rate_id'+(no_of_rows+1)+' onchange="calculate_amount(this.id)" required="true"></td> \
     <td><span id=amount'+(no_of_rows+1)+'></span></td> \
     <td><select name ="warehouses[]" id=warehouse_id'+(no_of_rows+1)+'>'+warehouse_options+'</select></td> \
     </tr>';
@@ -135,21 +139,18 @@ function change(id){
     //this will give selected dropdown value, that is item_id
     var selected_value = item_select_box.options[item_select_box.selectedIndex].value;
     //var selectedValue = item_select_box.value();
+    console.log("emlement id",id);
     
-    
-    console.log(selected_value);
-    current_row = id[id.length -1]
-    console.log("current_row ",current_row);
-        
-    if(current_row =="1"){
-        console.log("11111111111111111111");
-        var unit_box=$('#unit_id1');
-        unit_box.empty();
-    }else{
-        console.log("3333332323232323233");
-        var unit_select_box=$('#unit_id'+current_row);
-        unit_select_box.empty();                
-    }
+   // console.log(selected_value);
+    var element_id= id.replace(/[^0-9]/g, '');
+    console.log("121212121 ",element_id);
+          
+          if(element_id >=1){
+          var unit_box=$('#unit_id'+element_id);
+          console.log("unit111111 ",unit_box);
+          unit_box.empty();
+            }
+            
     $.ajax({
         type: 'get',
         url: '/sales-orders/getunits',
@@ -167,28 +168,23 @@ function change(id){
                 alert(response.error);
                 console.log(response.error);
                 }
-                console.log("response ",response);
-                if (response) {   
-                console.log("5ty5657yr6 ",current_row);
-                if(current_row == "1")
-              {
-              console.log("5ty5657yr6");
-                for(var k in response)
-                {
-                $("#unit_id1").append("<option value='" +k+ "'>" +response[k]+ "</option>"); 
-                  }
-              }  else {
-              console.log("tyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
-                 for(var k in response) 
-                     {
-                  $("#unit_id"+current_row).append("<option value='" +k+ "'>" +response[k]+ "</option>");
-                     }
-                   }      
-              }   
-            }
+             //   console.log("response ",response);
+               
+                if (response) {
+                if(element_id >= 1)
+                      {
+                        for(var k in response)
+                        {
+                        $("#unit_id"+element_id).append("<option value='" +k+ "'>" +response[k]+ "</option>"); 
+                          }
+                              console.log("ddddddddddd","#unit-id"+element_id);
+                      }
+                      
+                }
+              }  
+            });
+        }
         
-        });
-  }
 function changeCheck(){
           var sales_order_delete = $('#sales_order-id');
          
@@ -228,11 +224,15 @@ function changeCheck(){
                     xhr.setRequestHeader('X-CSRF-Token', $('[name="_csrfToken"]').val());
                 },
                 
-               success: function(response) {                    
+               success: function(response) {
                 if (response.error) {
-                alert(response.error);
-                console.log(response.error);
-            }
+                    $('.success-message').hide();
+                    $('.error-message').show();
+                    $('.error-message').html("The sales order could not be deleted. Please, try again.");
+                    $('.error-message').fadeIn();
+                    alert(response.error);
+                    console.log(response.error);
+                    }
             if (response){
                //location.reload();
                //console.log(response);
@@ -244,7 +244,14 @@ function changeCheck(){
                    // console.log(entry);
                     var chkbox = $('#'+entry);
                     chkbox.closest("tr").remove();
-                });               }  
+                    $('.success-message').show();
+                    $('.error-message').hide();
+                    $('.success-message').html("The sales order has been deleted");
+                    $('.success-message').fadeIn();
+                });  
+                      hide_submit();      
+                 }  
+                
            }
         });
         }
@@ -252,44 +259,29 @@ function changeCheck(){
         
       }
     
-    function calculate_amount(element){     
-    
-    var input_box = document.getElementById(element.id);
+    function calculate_amount(id){     
+    console.log("id ",id);
+    var input_box = document.getElementById(id);
     console.log("element ",input_box);
-    //var rate_box = document.getElementById("rate"+1);
-    console.log("rate_box");
-    //substring qty.id, get last number
-    
-        current_row = element.id[element.id.length -1] 
-        console.log("current_row ",current_row);    
-    if(current_row == "y" || current_row == "e"){
-        var rate_box = "";
-        if(current_row == "y"){
-            var rate_box = document.getElementById("rate_id");
+    var element_id=id.replace(/[^0-9]/g, '');
+    console.log("calculate amount ",element_id);
+    if(element_id >=1){
+            var rate_box = document.getElementById("rate_id"+element_id);
             var amount = input_box.value * rate_box.value;
             console.log("rrrrrrr ",rate_box.value);
-        }else{
-            var qty_box = document.getElementById("quantity_id");
+            }
+            else{
+            var qty_box = document.getElementById("quantity_id"+element_id);
             var amount = input_box.value * qty_box.value;
-        }    
-        console.log("hjhjhjh ", amount);
-        $('#amount').html(amount); 
-    }else{
-        console.log("in else");
-        current_row = element.id[element.id.length -1]
-        console.log("current_row ",current_row); 
-        var qty_box = document.getElementById("quantity_id"+current_row);
-        var rate_box = document.getElementById("rate_id"+current_row);
-        var amount = qty_box.value * rate_box.value;
-        console.log(amount);
-        $('#amount'+current_row).html(amount);
-    }
+            console.log("123123123 ",qty_box);          
+            } 
+            $('#amount'+element_id).html(amount);   
       }
       
       
     function hide_submit(){
          var no_of_rows = $('#salesOrderTable tr').length;
-         console.log("no of row in hide_submit function",no_of_rows);
+   //      console.log("no of row in hide_submit function",no_of_rows);
          if(no_of_rows == 0){
          var sub_btn=$('#btn_submit');
          sub_btn.hide();
@@ -301,13 +293,21 @@ function changeCheck(){
      }
       window.onload = hide_submit();
     
+    
     function check_date(){
-    var created_date=$('#created_date');
-    var delivery_date=$('#delivary_date');
-    if(create_date<delivery_date)
-    {
-     alert("created date cannot be smaller than the delivery date");
-     }
+        var created_date = $("#created_date").val();
+        var delivery_date = $("#delivery_date").val();
+       // var date1 = new Date(01,01,2018);
+      //  var date2 = new Date(31,12,2018);
+       // console.log("date validation",date2);
+        if(delivery_date > created_date)
+        {
+        window.alert("date entered is valid");
+        }
+        else{
+        //console.log("cbwu2222222222222",date2);
+        window.alert("date entered is invalid, delivery date cannot be earlier then created date");
+        }
     }
-     
+  
 </script>
