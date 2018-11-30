@@ -96,6 +96,7 @@
     
     var ppdf=document.getElementById("pdf_submit");
     var soid = $("#soid").val();
+    console.log("2355555555551344444444444444444444444444444444444",soid);
         //window.location.href = "http://localhost:8765/sales-orders/generatepdf?id="+$("#soid").val();
         window.open("http://localhost:8765/sales-orders/generatepdf?id="+soid);
     }

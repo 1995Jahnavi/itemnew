@@ -331,7 +331,7 @@ public function getitems()
    
     $ids=$array['sales_order_item_id'];
     $this->set('ids', $ids);
-   // debug($ids);die();
+    debug($ids);die();
     $salesOrderItems_table = TableRegistry::get('SalesOrderItems');
     
     $status = true;

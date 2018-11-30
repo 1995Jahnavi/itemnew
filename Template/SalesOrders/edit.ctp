@@ -73,7 +73,7 @@
     function do_onload(){
     console.log('afasfasf111111');
     var item_select_box = document.getElementById('item_id');
-    console.log(item_select_box); 
+    console.log("1212121212",item_select_box); 
     var smCount = $('#salesOrderTable tr').length;
     console.log('afasfasf111111 ',smCount);  
     
