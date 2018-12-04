@@ -15,6 +15,12 @@ use Cake\ORM\TableRegistry;
 class ItemsController extends AppController
 {
 
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('RequestHandler');
+    }
+    
     /**
      * Index method
      *

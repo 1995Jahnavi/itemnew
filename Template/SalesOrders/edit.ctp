@@ -65,7 +65,7 @@
     <input type="button" id="delsmbutton" value="Delete" onclick="changeCheck()" >
     </table>
     <button type="submit" value="Submit" id="btn_submit">Submit</button>
-    <?= $this->Form->end() ?>
+        <?= $this->Form->end() ?>
 </div>
  <script src="/js/jquery-3.3.1.min.js"></script>
 
@@ -88,7 +88,7 @@
         }
     }
     window.onload = do_onload();
-   // window.onload = hide_submit();
+  
     
     function add_row() {
     var table = document.getElementById("salesOrderTable");
@@ -258,14 +258,14 @@ function changeCheck(){
             alert("selected row is deleted"); 
         
       }
-    
     function calculate_amount(id){     
     console.log("id ",id);
     var input_box = document.getElementById(id);
     console.log("element ",input_box);
     var element_id=id.replace(/[^0-9]/g, '');
     console.log("calculate amount ",element_id);
-    if(element_id >=1){
+    if(element_id == 1 || element_id == 1){
+    if(element_id==1){
             var rate_box = document.getElementById("rate_id"+element_id);
             var amount = input_box.value * rate_box.value;
             console.log("rrrrrrr ",rate_box.value);
@@ -276,9 +276,16 @@ function changeCheck(){
             console.log("123123123 ",qty_box);          
             } 
             $('#amount'+element_id).html(amount);   
-      }
-      
-      
+    }else{
+         var element_id=id.replace(/[^0-9]/g, '');
+         var qty_box = document.getElementById("quantity_id"+element_id);
+        var rate_box = document.getElementById("rate_id"+element_id);
+        var amount = qty_box.value * rate_box.value;
+        console.log(amount);
+        $('#amount'+element_id).html(amount);
+    }        
+        
+    }
     function hide_submit(){
          var no_of_rows = $('#salesOrderTable tr').length;
    //      console.log("no of row in hide_submit function",no_of_rows);
@@ -292,7 +299,6 @@ function changeCheck(){
          }
      }
       window.onload = hide_submit();
-    
     
     function check_date(){
         var created_date = $("#created_date").val();
@@ -309,5 +315,5 @@ function changeCheck(){
         window.alert("date entered is invalid, delivery date cannot be earlier then created date");
         }
     }
-  
+ 
 </script>

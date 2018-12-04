@@ -9,8 +9,8 @@
     <h3><?= __('Sales Orders Report') ?></h3>
     <table>
     <tr>
-    <td> From date<input type="date" id="created_date" name="created_date"></td>
-    <td> To date<input type="date" id="delivery_date" name="delivary_date"></td>
+    <td> From date<input type="date" id="created_date" name="created_date" value="<?php echo date('Y-m-d'); ?>"></td>
+    <td> To date<input type="date" id="delivery_date" name="delivary_date" value="<?php echo date('Y-m-d'); ?>"></td>
     <td><?php echo $this->Form->control('warehouse_id',array('type'=>'select','name'=>'warehouses[]')); ?></td> 
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','name'=>'items[]')); ?></td>
     <td><button  class="buttApply" onclick="check_display()">APPLY</button></td>
@@ -29,18 +29,17 @@
             </tr>
         </thead>
      
-      <?php foreach ($sales_orders as $salesorder): ?>
-         <?php foreach ($salesorder->sales_order_items as $salesorderitem): ?>
+         <?php foreach ($sales_orders as $salesorderitem): ?>
             <tr>
-                <td><?= $this->Number->format($salesorder->id) ?></td>
-                <td><?= $salesorder->created_date ?></td>
-                <td><?= $salesorder->delivary_date ?></td>
+                <td><?= $salesorderitem->has('sales_order') ? $this->Html->link($salesorderitem->sales_order->id, ['controller' => 'SalesOrders', 'action' => 'view', $salesorderitem->sales_order->id]) : '' ?></td>
+
+                <td><?= $salesorderitem->sales_order->created_date ?></td>
+                <td><?= $salesorderitem->sales_order->delivary_date ?></td>
                 <td><?= $salesorderitem->item->item_name ?></td>                
                 <td><?= $salesorderitem->warehouse->name ?></td>
                 <td><?= $salesorderitem->rate ?></td>
                 <td><?= $salesorderitem->quantity ?></td>
            </tr>
-           <?php endforeach; ?>
            <?php endforeach; ?>
            
         </table>    
@@ -65,7 +64,7 @@ function check_display()
     var item_selected_value = item.options[item.selectedIndex].value;     
      console.log(item_selected_value);
        
-   window.location.assign("http://localhost:8765/sales-report?warehouse_id="+selected_value+"&item_id="+item_selected_value);
+   window.location.assign("http://localhost:8765/sales-report?warehouse_id="+selected_value+"&item_id="+item_selected_value+"&created_date="+created_date+"&delivery_date="+delivery_date);
 
 } 
     
