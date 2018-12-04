@@ -50,8 +50,9 @@ class ItemsController extends AppController
     		$item->ig_name = $ig->name;
     	}
 
-        $this->set(compact('items'));
-        
+        //$this->set(compact('items'));
+        $this->set('items', $this->paginate($this->Items));
+         $this->set('_serialize', ['items']);        
     }
 
     /**
