@@ -204,34 +204,38 @@ function deleteRow(row)
         }
       }
       
-        
   function calculate_amount(id){     
     console.log("id ",id);
-    var input_box = document.getElementById(id);
-    console.log("element ",input_box);
+    
+   // var input_box = document.getElementById(id);
+  //  console.log("element ",input_box);
+    
     var element_id=id.replace(/[^0-9]/g, '');
     console.log("calculate amount ",element_id);
-    if(element_id == "" || element_id == ""){
     if(element_id==""){
-            var rate_box = document.getElementById("rate");
-            var amount = input_box.value * rate_box.value;
-            console.log("rrrrrrr ",rate_box.value);
-            }
-            else{
-            var qty_box = document.getElementById("quantity");
-            var amount = input_box.value * qty_box.value;
-            console.log("123123123 ",qty_box);          
-            } 
+            var qty_box = document.getElementById("quantity"+element_id);
+            
+          //  var amount = input_box.value * qty_box.value;
+          //  console.log("123123123 ",qty_box.value); 
+            
+            var rate_box = document.getElementById("rate"+element_id);
+           
+           // var amount = input_box.value * rate_box.value;
+            
+             var amount = qty_box.value * rate_box.value;
+            
             $('#amount'+element_id).html(amount);   
-    }else{
-         var element_id=id.replace(/[^0-9]/g, '');
-         console.log("1212121121",element_id);
-         var qty_box = document.getElementById("quantity-id"+element_id);
+    }if(element_id>=1){
+       
+       // var element_id=id.replace(/[^0-9]/g, '');
+      //  console.log("1212121121",element_id);
+        
+        var qty_box = document.getElementById("quantity-id"+element_id);
         var rate_box = document.getElementById("rate-id"+element_id);
         var amount = qty_box.value * rate_box.value;
         console.log(amount);
         $('#amount'+element_id).html(amount);
-    }        
+    }    
         
     }
 

@@ -42,6 +42,7 @@ class SalesOrdersController extends AppController
 		} 
 	
 	  $this->set(compact('salesOrders'));
+	  $this->set('_serialize', ['salesOrders']); 
     
     }
     /**
@@ -58,8 +59,8 @@ class SalesOrdersController extends AppController
         ]);
 		
 		$customers = TableRegistry::get('Customers');
-		        $salesOrder->salesOrder_id=$salesOrder->id;
-               $salesOrder->customer_name=$customers->get($salesOrder->customer_id)->name;
+		$salesOrder->salesOrder_id=$salesOrder->id;
+        $salesOrder->customer_name=$customers->get($salesOrder->customer_id)->name;
 			   
 		foreach ($salesOrder->sales_order_items as $salesOrderItems)
 		{
@@ -76,6 +77,7 @@ class SalesOrdersController extends AppController
                  $salesOrderItems->warehouse_name=$warehouses->get($salesOrderItems->warehouse_id)->name;
 		}
         $this->set('salesOrder', $salesOrder);
+        $this->set('_serialize', ['salesOrder']); 
     }
     /**
      * Add method

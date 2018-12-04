@@ -264,21 +264,11 @@ function changeCheck(){
     console.log("element ",input_box);
     var element_id=id.replace(/[^0-9]/g, '');
     console.log("calculate amount ",element_id);
-    if(element_id == 1 || element_id == 1){
-    if(element_id==1){
-            var rate_box = document.getElementById("rate_id"+element_id);
-            var amount = input_box.value * rate_box.value;
-            console.log("rrrrrrr ",rate_box.value);
-            }
-            else{
-            var qty_box = document.getElementById("quantity_id"+element_id);
-            var amount = input_box.value * qty_box.value;
-            console.log("123123123 ",qty_box);          
-            } 
-            $('#amount'+element_id).html(amount);   
-    }else{
-         var element_id=id.replace(/[^0-9]/g, '');
-         var qty_box = document.getElementById("quantity_id"+element_id);
+    
+    if(element_id>=1)
+    {
+        var element_id=id.replace(/[^0-9]/g, '');
+        var qty_box = document.getElementById("quantity_id"+element_id);
         var rate_box = document.getElementById("rate_id"+element_id);
         var amount = qty_box.value * rate_box.value;
         console.log(amount);
