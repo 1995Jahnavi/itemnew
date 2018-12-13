@@ -119,6 +119,7 @@ class SalesOrdersController extends AppController
 						$st->type=1;
 						$st->referenceid=$salesOrder->id;
 						$st->transaction_date=$salesOrder->created_date;
+						//$st->balance=$st->balance;
 						$st_table->save($st);					
 				         $i++;
                    }
@@ -166,8 +167,9 @@ class SalesOrdersController extends AppController
         $salesOrder = $this->SalesOrders->get($id, [
             'contain' => ['SalesOrderItems']
         ]);
+       // debug($salesOrder);die();
         if ($this->request->is(['patch', 'post', 'put'])) {
-// debug($data);die();
+            
             $salesOrder = $this->SalesOrders->patchEntity($salesOrder, $this->request->getData());
             if ($this->SalesOrders->save($salesOrder)) {
                 $soi_table = TableRegistry::get('SalesOrderItems');
@@ -306,6 +308,8 @@ public function getunits()
     $this->autoRender = false ;
      // debug($itemid);die();
     $itemid = $this->request->query();
+    
+    //debug($itemid);die();
     
     $items_table = TableRegistry::get('Items');
     $item = $items_table->get($itemid['itemid']);

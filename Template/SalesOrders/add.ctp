@@ -91,8 +91,10 @@ function deleteRow(row)
             //this will give selected dropdown value, that is item_id
             
             var selected_value = item_select_box.options[item_select_box.selectedIndex].value;
-            console.log(selected_value);   
+            console.log("111111111111",selected_value); 
+              
             console.log(element.id);
+            
             var element_id= element.id.replace(/[^0-9]/g, '');
             console.log("121212121 ",element_id);
           
@@ -107,7 +109,7 @@ function deleteRow(row)
                  
             $.ajax({
                 type: 'get',
-                url: '/stock-movements/getunits',
+                url: '/sales-orders/getunits',
                 data: { 
                 itemid: selected_value
                 },

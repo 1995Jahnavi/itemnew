@@ -1,0 +1,196 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+<script src="moment.js"></script>
+<script>
+var app = angular.module("MyApp", []);
+
+app.controller("PostsCtrl", function($scope, $http) {
+
+  var pendingTask;
+  var warehouse;
+  var stocklocations;
+  var item;
+  var items;
+  var from_date;
+  var to_date;
+
+  if ($scope.search === undefined) {
+    $scope.search = "";
+    getData();
+  }
+$scope.warehousechange = function() {
+    
+    if(typeof $scope.item === "undefined"){
+    	$scope.item = null;
+    }
+  if(typeof $scope.from_date === "undefined"){
+    	$scope.from_date = null;
+    }
+  if(typeof $scope.to_date === "undefined"){
+    	$scope.to_date = null;
+    }
+	getData();
+  };
+
+ 
+$scope.itemchange = function() {
+   // console.log($scope.created_date);
+  if(typeof $scope.warehouse === "undefined"){
+    	$scope.warehouse = null;
+    }
+   if(typeof $scope.from_date === "undefined"){
+    	$scope.from_date = null;
+    }
+  if(typeof $scope.to_date === "undefined"){
+    	$scope.to_date = null;
+    } 
+	getData();
+  };
+   
+
+$scope.createddatechange = function() {
+   
+   if(typeof $scope.warehouse === "undefined"){
+    	$scope.warehouse = null;
+    }
+   if(typeof $scope.item === "undefined"){
+    	$scope.item= null;
+    }
+  if(typeof $scope.to_date === "undefined"){
+    	$scope.to_date = null;
+    }    
+	getData();
+  };
+
+$scope.deliverydatechange = function() {
+    
+   if(typeof $scope.warehouse === "undefined"){
+    	$scope.warehouse = null;
+    }
+   if(typeof $scope.item === "undefined"){
+    	$scope.item= null;
+    }
+    if(typeof $scope.from_date === "undefined"){
+    	$scope.from_date = null;
+    }  
+  
+       
+	getData();
+  };
+
+function getData() {
+    var url = "http://localhost:8765/sales-report/stocks.json";
+    var config = {
+	    params: {
+		"warehouse_id": $scope.warehouse,
+                "item_id": $scope.item,
+                "created_date": moment($scope.from_date).format('YYYY-MM-DD'),
+                "delivary_date":moment($scope.to_date).format('YYYY-MM-DD')
+               // "transaction_date":moment($scope.to_date).format('YYYY-MM-DD')
+               
+	    }
+	}               
+    console.log(config);
+
+    $http.get(url, config).
+    success(function(data, status, headers, config) {
+      
+/*$scope.naturalOrder = function(item){
+  return parseInt(item.value, 20);
+}; 
+*/
+
+$scope.stock_transactions = data.results.stock_transactions;
+//console.log("133131321321333232213112",data.results.sales_orders);
+$scope.stocklocations =data.results.warehouses;
+
+$scope.items = data.results.items;
+  }).
+    error(function(data, status, headers, config) {
+      //log error
+    console.log("121212212122121212");
+    });
+  }
+});
+
+
+</script>
+
+
+<body ng-app="MyApp">
+    <div class="container" ng-controller="PostsCtrl">
+
+        <div class="page-header">
+             <h1>Stock Transaction Report</h1>
+       </div>
+       
+<div class="form-group">
+<div class="col-md-12 text-center ">
+<table class="table">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">From date</th>
+      <th scope="col">To date</th>
+      <th scope="col">Warehouse</th>
+      <th scope="col">Item</th>
+    </tr>
+  </thead>
+<tbody>
+    <div ng-init="desc=true">
+    <tr>
+      <th scope="row"></th>
+      
+      <td><input type="date" ng-model="from_date" ng-change="createddatechange()" >
+</input></td>
+
+    <td><input type="date" ng-model="to_date"  ng-change="deliverydatechange()">
+</input></td>
+
+      <td><select ng-model="warehouse" ng-options="key as value.name for (key , value) in stocklocations " ng-change="warehousechange()" ></select></td>
+      <td><select ng-model="item" ng-options="key as value.item_name for (key , value) in items | orderBy: 'value.item_name'"  ng-change="itemchange()"></select></td>
+      
+    </tr>
+  </div>
+ </table>
+
+<div class="col-md-12 text-center ">
+ <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Stock Transaction Id</th>
+      <th scope="col">Item</th>
+      <th scope="col">Warehouse</th>
+      <th scope="col">Transaction Date</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Unit</th>
+      <th scope="col">Rate</th>
+      <th scope="col">Balance</th>
+    </tr>
+  </thead>
+
+<tbody>
+   <tr ng-repeat="stock_transaction in stock_transactions">
+      
+      <th scope="row"></th>
+      <td>{{stock_transaction.id}}</td>
+      <td>{{stock_transaction.item.item_name}}</td>
+      <td>{{stock_transaction.warehouse.name}}</td>
+      <td>{{stock_transaction.transaction_date}}</td>
+      <td>{{stock_transaction.quantity}}</td>
+      <td>{{stock_transaction.unit.unit_name}}</td>
+      <td>{{stock_transaction.rate |number:2}}</td>
+      <td>{{stock_transaction.balance}}</td>
+      
+      
+ </tr>
+ </tbody>
+
+ </table>
+</div>
+  </div>      
+</body>
