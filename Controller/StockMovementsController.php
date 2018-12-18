@@ -208,11 +208,22 @@ class StockMovementsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $stockMovement = $this->StockMovements->get($id);
-        if ($this->StockMovements->delete($stockMovement)) {
-            $this->Flash->success(__('The stock movement has been deleted.'));
-        } else {
-            $this->Flash->error(__('The stock movement could not be deleted. Please, try again.'));
+        
+        try {
+            $this->StockMovements->delete($stockMovement);
         }
+        catch (\PDOException $e) {
+            $error = 'The stock you are trying to delete is associated with other records';
+            // The exact error message is $e->getMessage();
+            $this->set('error', $e);
+            $this->Flash->error(__('The stock could not be deleted. Please, try again.'));
+        }
+        
+//         if ($this->StockMovements->delete($stockMovement)) {
+//             $this->Flash->success(__('The stock movement has been deleted.'));
+//         } else {
+//             $this->Flash->error(__('The stock movement could not be deleted. Please, try again.'));
+//         }
 
         return $this->redirect(['action' => 'index']);
     }
@@ -232,7 +243,7 @@ class StockMovementsController extends AppController
         $units_table = TableRegistry::get('Units');
         
 //         $units = $units_table->find('all',['id IN'=>[$item->purchase_unit, $item->sell_unit, $item->usage_unit]]);
-        $units = $units_table->find('list')->where(['id IN' => [$item->purchase_unit, $item->sell_unit, $item->usage_unit]]);
+        $units = $units_table->find('list')->where(['id IN' => [$item->purchase_unit, $item->sell_unit]]);
 
         $this->RequestHandler->renderAs($this, 'json');
         

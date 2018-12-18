@@ -38,6 +38,25 @@ class WarehousesTable extends Table
         $this->setTable('warehouses');
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
+        
+//         $this->hasMany('StockMovements', [
+//             'foreignKey' => 'from_warehouse_id',
+//             'foreignKey' => 'to_warehouse_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
+        
+//         $this->hasMany('StockTransactions', [
+//             'foreignKey' => 'warehouse_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
+        
+//         $this->hasMany('SalesOrderItems', [
+//             'foreignKey' => 'warehouse_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
     }
 
     /**

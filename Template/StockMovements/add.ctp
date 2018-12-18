@@ -10,8 +10,6 @@
         <li><?= $this->Html->link(__('List Stock Movements'), ['action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('List Warehouses'), ['controller' => 'Warehouses', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Warehouse'), ['controller' => 'Warehouses', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Stock Movement Items'), ['controller' => 'StockMovementItems', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Stock Movement Item'), ['controller' => 'StockMovementItems', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="stockMovements form large-9 medium-8 columns content">
@@ -20,7 +18,7 @@
         <legend><?= __('Add Stock Movement') ?></legend>
         <?php
             echo $this->Form->control('from_warehouse_id', ['options' => $warehouses]);
-            echo $this->Form->control('to_warehouse_id', ['options' => $warehouses]);
+            echo $this->Form->control('to_warehouse_id', ['options' => $warehouses,'onchange'=>'change_warehouse()']);
             $this->Form->templates(
               ['dateWidget' => '{{day}}{{month}}{{year}}']
             );
@@ -31,7 +29,7 @@
     <table id="stockMovementsTable">
     <tr>
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('name'=>'qty[]','required' => true)); ?></td>        
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00')); ?></td>        
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
     </tr>
     
@@ -129,4 +127,18 @@
                 
             });
         }
+
+      function change_warehouse()
+		{
+			var wh1=$('#from-warehouse-id').val();
+			console.log("1234",wh1);
+			var wh2=$('#to-warehouse-id').val();
+			console.log("12345",wh2);
+			if(wh1==wh2){
+				window.alert("from warehouse and to warehouse cannot be same");
+			}
+			else{
+				window.alert("warehouse is correct");
+			}
+		}
   </script>

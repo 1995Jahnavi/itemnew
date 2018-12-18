@@ -8,8 +8,6 @@
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('New Sales Order'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Sales Order Items'), ['controller' => 'SalesOrderItems', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Sales Order Item'), ['controller' => 'SalesOrderItems', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="salesOrders index large-9 medium-8 columns content">
@@ -30,8 +28,8 @@
             <tr>
                 <td><?= $this->Number->format($salesOrder->id) ?></td>
                 <td><?= $salesOrder->customer_name ?></td>
-                <td><?= h($salesOrder->created_date) ?></td>
-                <td><?= h($salesOrder->delivary_date) ?></td>
+                <td><?= h($salesOrder->created_date->i18nFormat('dd-MM-YYYY')) ?> </td>
+                <td><?= h($salesOrder->delivary_date->i18nFormat('dd-MM-YYYY')) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['action' => 'view', $salesOrder->id]) ?>
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $salesOrder->id]) ?>

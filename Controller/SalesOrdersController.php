@@ -294,11 +294,21 @@ class SalesOrdersController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $salesOrder = $this->SalesOrders->get($id);
-        if ($this->SalesOrders->delete($salesOrder)) {
-            $this->Flash->success(__('The sales order has been deleted.'));
-        } else {
-            $this->Flash->error(__('The sales order could not be deleted. Please, try again.'));
+        
+        try {
+            $this->SalesOrders->delete($salesOrder);
         }
+        catch (\PDOException $e) {
+            $error = 'The sales order  you are trying to delete is associated with other records';
+            // The exact error message is $e->getMessage();
+            $this->set('error', $e);
+            $this->Flash->error(__('The sales order  could not be deleted. Please, try again.'));
+        }
+//         if ($this->SalesOrders->delete($salesOrder)) {
+//             $this->Flash->success(__('The sales order has been deleted.'));
+//         } else {
+//             $this->Flash->error(__('The sales order could not be deleted. Please, try again.'));
+//         }
         return $this->redirect(['action' => 'index']);
     }
 public function getunits()
@@ -316,7 +326,7 @@ public function getunits()
     $units_table = TableRegistry::get('Units');
     
     //         $units = $units_table->find('all',['id IN'=>[$item->purchase_unit, $item->sell_unit, $item->usage_unit]]);
-    $units = $units_table->find('list')->where(['id IN' => [$item->purchase_unit, $item->sell_unit, $item->usage_unit]]);
+    $units = $units_table->find('list')->where(['id IN' => [$item->purchase_unit, $item->sell_unit]]);
     
     $this->RequestHandler->renderAs($this, 'json');
     

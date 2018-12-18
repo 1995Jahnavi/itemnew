@@ -96,11 +96,22 @@ class UnitsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $unit = $this->Units->get($id);
-        if ($this->Units->delete($unit)) {
-            $this->Flash->success(__('The unit has been deleted.'));
-        } else {
-            $this->Flash->error(__('The unit could not be deleted. Please, try again.'));
+        
+        try {
+            $this->Units->delete($unit);
         }
+        catch (\PDOException $e) {
+            $error = 'The Unit you are trying to delete is associated with other records';
+            // The exact error message is $e->getMessage();
+            $this->set('error', $e);
+            $this->Flash->error(__('The Unit could not be deleted. Please, try again.'));
+        }
+        
+//         if ($this->Units->delete($unit)) {
+//             $this->Flash->success(__('The unit has been deleted.'));
+//         } else {
+//             $this->Flash->error(__('The unit could not be deleted. Please, try again.'));
+//         }
 
         return $this->redirect(['action' => 'index']);
     }

@@ -10,8 +10,6 @@
         <li><?= $this->Html->link(__('New Stock Movement'), ['action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Warehouses'), ['controller' => 'Warehouses', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Warehouse'), ['controller' => 'Warehouses', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Stock Movement Items'), ['controller' => 'StockMovementItems', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Stock Movement Item'), ['controller' => 'StockMovementItems', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="stockMovements index large-9 medium-8 columns content">

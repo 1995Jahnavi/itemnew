@@ -11,9 +11,7 @@
         <li><?= $this->Form->postLink(__('Delete Sales Order'), ['action' => 'delete', $salesOrder->id], ['confirm' => __('Are you sure you want to delete # {0}?', $salesOrder->id)]) ?> </li>
         <li><?= $this->Html->link(__('List Sales Orders'), ['action' => 'index']) ?> </li>
         <li><?= $this->Html->link(__('New Sales Order'), ['action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Sales Order Items'), ['controller' => 'SalesOrderItems', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Sales Order Item'), ['controller' => 'SalesOrderItems', 'action' => 'add']) ?> </li>
-    </ul>
+     </ul>
 </nav>
 <div class="salesOrders view large-9 medium-8 columns content">
     <button type="submit" value="Submit" id="pdf_submit" onclick="print_pdf()" target="">Print Pdf</button>
@@ -85,7 +83,9 @@
             var qty = $('#quantity_id'+i).text();
 			var rate = $('#rate_id'+i).text();
 			var amount = parseFloat(qty) * parseFloat(rate);
-			$('#amount_id'+i).text(amount);
+			var amount = parseFloat(qty) * parseFloat(rate);
+			var amt=amount.toPrecision(4);
+			$('#amount_id'+i).text(amt);
             console.log(amount,qty,rate);            
 		}
 		}

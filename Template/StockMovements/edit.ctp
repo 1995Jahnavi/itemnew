@@ -16,8 +16,6 @@
         <li><?= $this->Html->link(__('List Stock Movements'), ['action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('List Warehouses'), ['controller' => 'Warehouses', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Warehouse'), ['controller' => 'Warehouses', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Stock Movement Items'), ['controller' => 'StockMovementItems', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Stock Movement Item'), ['controller' => 'StockMovementItems', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="stockMovements form large-9 medium-8 columns content">
@@ -51,7 +49,7 @@
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$stockMovementItem->id)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'default'=>$stockMovementItem->item_id, 'name'=>'items[]', 'id'=>$itemid,'onchange'=>'change(this.id)','disabled'=>true)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'hidden','options'=>$items, 'default'=>$stockMovementItem->item_id, 'name'=>'items[]', 'id'=>$itemid,'onchange'=>'change(this.id)')); ?></td>
-    <td><?php echo $this->Form->control('quantity',  array('name'=>'qty[]','default'=>$stockMovementItem->quantity)); ?></td>
+    <td><?php echo $this->Form->control('quantity',array('type'=>'number','name'=>'qty[]','default'=>$stockMovementItem->quantity,'min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units,'default'=>$stockMovementItem->unit_id, 'name'=>'units[]','id'=>$unitid)); ?></td>
     
     </tr>
@@ -108,7 +106,7 @@
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this.id)" id=item_id'+(no_of_rows+1)+'>'+item_options+'</select></td> \
     <td></td> \
-    <td><?php echo $this->Form->control('', array('name'=>'qty[]')); ?></td> \
+    <td><?php echo $this->Form->control('', array('type'=>'number','name'=>'qty[]','min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00')); ?></td> \
     <td><select name ="units[]" id=unit_id'+(no_of_rows+1)+'>'+unit_options+'</select></td> \
     </tr>';
     

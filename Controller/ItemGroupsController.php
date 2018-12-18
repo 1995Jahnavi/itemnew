@@ -117,11 +117,22 @@ class ItemGroupsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $itemGroup = $this->ItemGroups->get($id);
-        if ($this->ItemGroups->delete($itemGroup)) {
-            $this->Flash->success(__('The item group has been deleted.'));
-        } else {
+        
+        try {
+            $this->ItemGroups->delete($itemGroup);
+        }
+        catch (\PDOException $e) {
+            $error = 'The item group you are trying to delete is associated with other records';
+            // The exact error message is $e->getMessage();
+            $this->set('error', $e);
             $this->Flash->error(__('The item group could not be deleted. Please, try again.'));
         }
+        
+//         if ($this->ItemGroups->delete($itemGroup)) {
+//             $this->Flash->success(__('The item group has been deleted.'));
+//         } else {
+//             $this->Flash->error(__('The item group could not be deleted. Please, try again.'));
+//         }
 
         return $this->redirect(['action' => 'index']);
     }

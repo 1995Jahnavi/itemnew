@@ -8,8 +8,6 @@
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('List Sales Orders'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Sales Order Items'), ['controller' => 'SalesOrderItems', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Sales Order Item'), ['controller' => 'SalesOrderItems', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="salesOrders form large-9 medium-8 columns content">
@@ -24,16 +22,16 @@
            //  echo $this->Form->control('created_date');
            //  echo $this->Form->control('delivary_date');
       //  ?>
-        created date<input type="date" id="created_date" name="created_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->created_date)) ?>">
-        delivery date<input type="date" id="delivery_date"  name="delivary_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->delivary_date)) ?>" onchange="check_date()">
+        created date<input type="date" id="created_date" name="created_date" value="<?php echo date("d-m-Y", strtotime($salesOrder->created_date)) ?>">
+        delivery date<input type="date" id="delivery_date"  name="delivary_date" value="<?php echo date("d-m-Y", strtotime($salesOrder->delivary_date)) ?>" onchange="check_date()">
         
     </fieldset>
     <table id="salesOrderTable">
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>'chk')); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this.id)')); ?></td>
-    <td><?php echo $this->Form->control('rate', array('type'=>'number','name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this.id)')); ?></td>        
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'onchange'=>'calculate_amount(this.id)','min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00')); ?></td>
+    <td><?php echo $this->Form->control('rate', array('type'=>'number','min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','name'=>'rte[]','required' => true,'onchange'=>'calculate_amount(this.id)','value'=>'0.00')); ?></td>    
     <td><span id='amount' default=true></span></td>     
     <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td>   
     </tr>
@@ -41,7 +39,7 @@
     <input type="button" id="delsmbutton" value="Delete" onclick="changeCheck()" >
 	
     </table>
-    <?= $this->Form->button(__('Submit')) ?>
+    <button type="submit" value="Submit" id="btn_submit">Submit</button>
     <?= $this->Form->end() ?>
 </div>
  <script src="/js/jquery-3.3.1.min.js"></script>
@@ -70,8 +68,8 @@
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
     <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
-    <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this.id)" required="true"></td> \
-    <td><input type="number" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this.id)" required="true"></td> \
+    <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' onchange="calculate_amount(this.id)" required="true" min="0.00" max="9999999999.99" step="0.01"></td> \
+    <td><input type="number" name ="rte[]" id=rate-id'+(no_of_rows)+' onchange="calculate_amount(this.id)" required="true" min="0.00" max="9999999999.99" step="0.01"></td> \
     <td><span id=amount'+(no_of_rows)+' > </span> </td> \
     <td><?php echo $this->Form->control('',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]')); ?></td> \
     </tr>';

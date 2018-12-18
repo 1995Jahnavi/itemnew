@@ -110,6 +110,9 @@ class SalesOrderItemsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $salesOrderItem = $this->SalesOrderItems->get($id);
+        
+        
+        
         if ($this->SalesOrderItems->delete($salesOrderItem)) {
             $this->Flash->success(__('The sales order item has been deleted.'));
         } else {

@@ -35,6 +35,31 @@ class UnitsTable extends Table
         $this->setTable('units');
         $this->setDisplayField('unit_name');
         $this->setPrimaryKey('id');
+        
+//         $this->hasMany('StockMovementItems', [
+//             'foreignKey' => 'unit_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
+//         $this->hasMany('Items', [
+//             'foreignKey' => 'purchase_unit',
+//             'foreignKey' => 'sell_unit',
+//             'foreignKey' => 'usage_unit',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+            
+//         ]);
+//         $this->hasMany('SalesOrderItems', [
+//             'foreignKey' => 'unit_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
+        
+//         $this->hasMany('StockTransactions', [
+//             'foreignKey' => 'unit_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
     }
 
     /**

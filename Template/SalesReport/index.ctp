@@ -29,13 +29,14 @@
             </tr>
         </thead>
      
+        
          <?php foreach ($sales_orders as $salesorderitem): ?>
             <tr>
                 <td><?= $salesorderitem->has('so') ? $this->Html->link($salesorderitem->so['id'], ['controller' => 'SalesOrders', 'action' => 'view', $salesorderitem->so['id']]) : '' ?></td>
                 <td><?= $salesorderitem->so['created_date'] ?></td>
                 <td><?= $salesorderitem->so['delivary_date'] ?></td>
-                <td><?= $salesorderitem->item->item_name ?></td>                
-                <td><?= $salesorderitem->warehouse->name ?></td>
+                <td><?= $salesorderitem->item['item_name'] ?></td>                
+                <td><?= $salesorderitem->warehouse['name'] ?></td>
                 <td><?= $salesorderitem->rate ?></td>
                 <td><?= $salesorderitem->quantity ?></td>
            </tr>
