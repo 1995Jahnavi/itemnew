@@ -115,7 +115,7 @@ class ItemsController extends AppController
 	        $this->set('units',$this->Units->find('list'));		
 	        $this->Units = TableRegistry::get('ItemGroups');
 	        $this->set('itemgroups',$this->Units->find('list'));
-	        $this->Flash->error(__('The item could not be saved. Please, try again.'));
+	        $this->Flash->error(__('The Item with this name already exists, please try again with different name '));
         } 
             else if($this->request->is('get')){
 //        	debug('get');die();
@@ -186,7 +186,7 @@ class ItemsController extends AppController
             $error = 'The item you are trying to delete is associated with other records';
             // The exact error message is $e->getMessage();
             $this->set('error', $e);
-            $this->Flash->error(__('The item could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The item could not be deleted because it is being used.'));
         }
         
 //         if ($this->Items->delete($item)) {

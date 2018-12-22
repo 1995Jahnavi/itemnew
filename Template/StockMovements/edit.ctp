@@ -42,14 +42,14 @@
    // if($index > 1){
        $itemid ='item_id'.$index;
        $unitid = 'unit_id'.$index;
-     
+       $quantity = 'quantity_id'.$index;
    // }
     ?>
     <tr> 
     <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>$stockMovementItem->id)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'default'=>$stockMovementItem->item_id, 'name'=>'items[]', 'id'=>$itemid,'onchange'=>'change(this.id)','disabled'=>true)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'hidden','options'=>$items, 'default'=>$stockMovementItem->item_id, 'name'=>'items[]', 'id'=>$itemid,'onchange'=>'change(this.id)')); ?></td>
-    <td><?php echo $this->Form->control('quantity',array('type'=>'number','name'=>'qty[]','default'=>$stockMovementItem->quantity,'min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00')); ?></td>
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','id'=>$quantity,'required' => true,'default'=>$stockMovementItem->quantity ,'min'=>'.01', 'max'=>'9999999999.99','step'=>'.01')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units,'default'=>$stockMovementItem->unit_id, 'name'=>'units[]','id'=>$unitid)); ?></td>
     
     </tr>
@@ -87,6 +87,8 @@
         }
     }
     window.onload = do_onload();
+
+    
     
     function add_row() {
     var table = document.getElementById("stockMovementsTable");
@@ -106,11 +108,13 @@
     <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this.id)" id=item_id'+(no_of_rows+1)+'>'+item_options+'</select></td> \
     <td></td> \
-    <td><?php echo $this->Form->control('', array('type'=>'number','name'=>'qty[]','min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00')); ?></td> \
+    <td><input type="number" name ="qty[]" id=quantity_id'+(no_of_rows+1)+' required="true"  min=".01" max="9999999999.99" step=".01"></td> \
     <td><select name ="units[]" id=unit_id'+(no_of_rows+1)+'>'+unit_options+'</select></td> \
     </tr>';
     
-    var item_select_box = document.getElementById('item_id'+no_of_rows);
+    var item_select_box = document.getElementById('item_id'+(no_of_rows+1));
     change(item_select_box.id);
 }
+
+
 </script>

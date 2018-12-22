@@ -18,7 +18,7 @@
         <legend><?= __('Add Stock Movement') ?></legend>
         <?php
             echo $this->Form->control('from_warehouse_id', ['options' => $warehouses]);
-            echo $this->Form->control('to_warehouse_id', ['options' => $warehouses,'onchange'=>'change_warehouse()']);
+            echo $this->Form->control('to_warehouse_id', ['options' => $warehouses]);
             $this->Form->templates(
               ['dateWidget' => '{{day}}{{month}}{{year}}']
             );
@@ -28,16 +28,19 @@
 
     <table id="stockMovementsTable">
     <tr>
+    <td><?php echo $this->Form->input('checkbox', array('type'=>'checkbox','name'=>'chk[]','id'=>'chk')); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','onchange'=>'change(this)')); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00')); ?></td>        
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','required' => true,'min'=>'.01', 'max'=>'9999999999.99','step'=>'.01')); ?></td>        
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]')); ?></td>
     </tr>
     
     <input type= "button" onclick= "add_row()" value= "Add row" > 
-    <input type="button" id="delsmbutton" value="Delete" onclick="deleteRow(this)">
+    <input type="button" id="delsmbutton" value="Delete" onclick="changeCheck()">
     </table>
     
-    <?= $this->Form->button(__('Submit')) ?>
+    <button type="button" value="Submit" id="btn_submit" onclick="change_warehouse()">Submit</button>
+    <button type="submit" value="Submit" id="btn_submit1" style="display: none">Submit</button>
+    
     <?= $this->Form->end() ?>
 </div>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -48,6 +51,7 @@
     
     function add_row() {
     var table = document.getElementById("stockMovementsTable");
+    var smCount = $('#salesOrderTable tr').length;
     var no_of_rows = $('#stockMovementsTable tr').length;
     var units= <?php echo json_encode($units); ?>;
     var unit_options = "";
@@ -60,8 +64,9 @@
          item_options +="<option value='" +k+ "'>" +items[k]+ "</option>"; 
          }
     var row = table.insertRow().innerHTML ='<tr> \
+    <td><input type="checkbox" name="chk[]" id=chk'+(smCount+1)+'></td> \
     <td><select name ="items[]"  onchange="change(this)" id=item-id'+(no_of_rows)+'>'+item_options+'</select></td> \
-    <td><?php echo $this->Form->control('', array('name'=>'qty[]','required' => true)); ?></td> \
+    <td><input type="number" name ="qty[]" id=quantity-id'+(no_of_rows)+' required="true"  min=".01" max="9999999999.99" step=".01"></td> \
     <td><select name ="units[]" id=unit-id'+(no_of_rows)+'><option></option>'+unit_options+'</select></td> \
     </tr>'; 
     var item_select_box = document.getElementById('item-id'+no_of_rows);
@@ -128,17 +133,94 @@
             });
         }
 
+
+      function changeCheck(){
+          var stock_movement_delete = $('#stock-movement-id');
+         
+          var checkboxes = document.getElementsByName("chk[]");
+          //console.log(checkboxes);
+          
+	      var checkids = new Array();
+	     // var checkdelete = new Array();
+	     
+	    $("input[name='chk[]']:checked").each(function() {
+              if ($(this).is(":checked")) {
+                 var chkbox = $('#'+$(this).attr('id'));
+                 var isnum = /^\d+$/.test($(this).attr('id'));				
+ 				    if(!isnum)
+ 				    {
+                 
+                 	//console.log(chkbox.closest("tr"));
+                 	chkbox.closest("tr").remove();
+                 }else{
+                 	checkids.push($(this).attr('id'));
+                 }
+              }
+                 
+              }); 
+          
+              // console.log(checkid);
+	      
+	       
+	       //return false;
+	if(checkids.length > 0){    
+	console.log(checkids);   
+	$.ajax({
+                type:"POST",
+                async: true,
+                cache: false,
+                url: '/stock-movements/getitems',
+		        data: { 
+					stockmovementid: checkids
+                },
+		   dataType: 'json',
+                beforeSend: function(xhr) {
+                    //xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                    xhr.setRequestHeader('X-CSRF-Token', $('[name="_csrfToken"]').val());
+                },
+                
+               success: function(response) {					
+				if (response.error) {
+				alert(response.error);
+				console.log(response.error);
+			}
+			if (response){
+			   //location.reload();
+			   //console.log(response);
+//			   $(this).closest('tr').remove();
+			   //location.reload();
+			   
+			   //delete the checkbox closest parent tr
+			   checkids.forEach(function(entry) {
+				    console.log(entry);
+				    var chkbox = $('#'+entry);
+				    chkbox.closest("tr").remove();
+				});			   
+			   
+			   }  
+           }
+        });
+        }
+      }
+  
+
       function change_warehouse()
 		{
 			var wh1=$('#from-warehouse-id').val();
 			console.log("1234",wh1);
 			var wh2=$('#to-warehouse-id').val();
+			var new_qty=$('#quantity').val();
 			console.log("12345",wh2);
 			if(wh1==wh2){
 				window.alert("from warehouse and to warehouse cannot be same");
+				return false;
 			}
-			else{
-				window.alert("warehouse is correct");
-			}
+// 			if(quantity.value<=0){
+// 				window.alert("quantity cannot be zero or less , it should be greater than or equal to 1");
+// 				return false;
+// 				}
+			$('#btn_submit1').click();
+			//document.getElementById("myForm").submit();
+			
 		}
   </script>

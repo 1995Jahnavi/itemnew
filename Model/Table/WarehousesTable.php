@@ -97,6 +97,8 @@ class WarehousesTable extends Table
         if($warehouse > 0)
         {
             return false;
+           // $this->Flash->error(__('The warehouse with this name already exists . Please, try again with different name.'));
+            
         }
         
         //debug($entity);die();

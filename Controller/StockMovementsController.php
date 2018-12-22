@@ -91,7 +91,28 @@ class StockMovementsController extends AppController
 	//debug($this->request->getData());die();	  
         $stockMovement = $this->StockMovements->newEntity();
         
-        if ($this->request->is('post')) {
+          //  $i = 0;
+            //$has_error=false;
+             if ($this->request->is('post')) {
+//                 foreach($data['items'] as $item)
+//                 {
+                    
+//                     $num = floatval($data['qty'][$i]);
+                    
+//                     //                 debug($num);
+//                     // $num=$data['qty'][$i];
+//                     if($num <= 0){
+//                         $this->Flash->error(__('The stock quantity cannot be 0'));
+//                         return $this->redirect(['action' => 'add']);
+//                         break;
+//                     }
+//                     else{
+//                         // return $this->redirect(['action' => 'add']);
+//                     }
+//                     $i++;
+                    
+//                 }
+                
             $stockMovement = $this->StockMovements->patchEntity($stockMovement, $this->request->getData());
             if ($this->StockMovements->save($stockMovement)) {
 		$smi = TableRegistry::get('StockMovementItems');
@@ -147,8 +168,26 @@ class StockMovementsController extends AppController
             'contain' => ['StockMovementItems']
         ]);
        // debug($stockMovement);die();
+      $i=0;
         if ($this->request->is(['patch', 'post', 'put'])) {
-           
+            foreach($data['items'] as $item)
+            {
+                
+                $num = floatval($data['qty'][$i]);
+                //                 debug($num);
+                // $num=$data['qty'][$i];
+                if($num <= 0){
+                    $this->Flash->error(__('The sales order quantity cannot be 0'));
+                    return $this->redirect(['action' => 'add']);
+                    break;
+                }
+                else{
+                    // return $this->redirect(['action' => 'add']);
+                }
+                $i++;
+                
+            }
+        
             $stockMovement = $this->StockMovements->patchEntity($stockMovement, $this->request->getData());
             if ($this->StockMovements->save($stockMovement)) {
             $smi_table = TableRegistry::get('StockMovementItems');
@@ -216,7 +255,7 @@ class StockMovementsController extends AppController
             $error = 'The stock you are trying to delete is associated with other records';
             // The exact error message is $e->getMessage();
             $this->set('error', $e);
-            $this->Flash->error(__('The stock could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The stock could not be deleted because it is being used. Please, try again.'));
         }
         
 //         if ($this->StockMovements->delete($stockMovement)) {

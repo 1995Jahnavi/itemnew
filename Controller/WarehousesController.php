@@ -61,7 +61,7 @@ class WarehousesController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The warehouse could not be saved. Please, try again.'));
+            $this->Flash->error(__('The warehouse with this name already exists, please try again with different name '));
         }
        /** $units = $this->Warehouses->Units->find('list', ['limit' => 200]);
         $items = $this->Warehouses->Items->find('list', ['limit' => 200]);
@@ -114,7 +114,7 @@ class WarehousesController extends AppController
             $error = 'The Warehouse you are trying to delete is associated with other records';
             // The exact error message is $e->getMessage();
             $this->set('error', $e);
-            $this->Flash->error(__('The Warehouses could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The Warehouses could not be deleted because it is being used. Please, try again.'));
         }
         
         

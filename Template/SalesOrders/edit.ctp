@@ -4,7 +4,7 @@
  * @var \App\Model\Entity\SalesOrder $salesOrder
  */
 ?>
-<div class="message success success-message" onclick="this.classList.add('hidden')">The purchase order has been saved.</div>
+<div class="message success success-message" onclick="this.classList.add('hidden')">The sales order has been saved.</div>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
@@ -30,7 +30,7 @@
             //echo $this->Form->control('delivary_date',array('id'=>'delivary_date'));
         ?>
         created date<input type="date" id="created_date" name="created_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->created_date)) ?>">
-        delivery date<input type="date" id="delivery_date"  name="delivary_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->delivary_date)) ?>" onchange="check_date()">
+        delivery date<input type="date" id="delivery_date"  name="delivary_date" value="<?php echo date("Y-m-d", strtotime($salesOrder->delivary_date)) ?>">
         
     </fieldset>
     <table id="salesOrderTable">
@@ -50,8 +50,8 @@
     <td><?php echo $this->Form->control('item_id',array('type'=>'select','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this.id)','disabled'=>true)); ?></td>
     <td><?php echo $this->Form->control('item_id',array('type'=>'hidden','options'=>$items, 'name'=>'items[]','id'=>$itemid,'default'=>$salesOrderItems->item_id,'onchange'=>'change(this.id)')); ?></td>
     <td><?php echo $this->Form->control('unit_id',array('type'=>'select','options'=>$units, 'name'=>'units[]','id'=>$unitid,'default'=>$salesOrderItems->unit_id)); ?></td>
-    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','id'=>$quantity,'required' => true,'onchange'=>'calculate_amount(this.id)','default'=>$salesOrderItems->quantity)); ?></td>
-    <td><?php echo $this->Form->control('rate', array('type'=>'number','min'=>'0.00', 'max'=>'9999999999.99','step'=>'0.01','value'=>'0.00','name'=>'rte[]','id'=>$rate,'required' => true,'onchange'=>'calculate_amount(this.id)','default'=>$salesOrderItems->rate)); ?></td>
+    <td><?php echo $this->Form->control('quantity', array('type'=>'number','name'=>'qty[]','id'=>$quantity,'required' => true,'onchange'=>'calculate_amount(this.id)','default'=>$salesOrderItems->quantity ,'min'=>'.01', 'max'=>'9999999999.99','step'=>'.01')); ?></td>
+    <td><?php echo $this->Form->control('rate', array('type'=>'number','min'=>'.01', 'max'=>'9999999999.99','step'=>'.01','name'=>'rte[]','id'=>$rate,'required' => true,'onchange'=>'calculate_amount(this.id)','default'=>$salesOrderItems->rate)); ?></td>
     <td><span id="<?php echo $amount ;?>"></span></td>
     <td><?php echo $this->Form->control('warehouse',array('type'=>'select','options'=>$warehouses, 'name'=>'warehouses[]','id'=>$warehouse,'default'=>$salesOrderItems->warehouse)); ?></td>
     </tr>
@@ -62,7 +62,8 @@
     <input type= "button" onclick= "add_row();hide_submit()"  value= "Add row"> 
     <input type="button" id="delsmbutton" value="Delete" onclick="changeCheck()" >
     </table>
-    <button type="submit" value="Submit" id="btn_submit">Submit</button>
+    <button type="button" value="Submit" id="btn_submit" onclick="check_date()">Submit</button>
+     <button type="submit" value="Submit" id="btn_submit1" style="display: none">Submit</button>
         <?= $this->Form->end() ?>
 </div>
  <script src="/js/jquery-3.3.1.min.js"></script>
@@ -114,8 +115,8 @@
     <td><select name ="items[]" onchange="change(this.id)" id=item_id'+(no_of_rows+1)+'>'+item_options+'</select></td> \
     <td></td> \
     <td><select name ="units[]" id=unit_id'+(no_of_rows+1)+'>'+unit_options+'</select></td> \
-    <td><input type="number" name ="qty[]" id=quantity_id'+(no_of_rows+1)+' onchange="calculate_amount(this.id)" required="true"></td> \
-    <td><input type="number" name ="rte[]" id=rate_id'+(no_of_rows+1)+' onchange="calculate_amount(this.id)" required="true" min="0.00" "max"="9999999999.99" "step"="0.01"></td> \
+    <td><input type="number" name ="qty[]" id=quantity_id'+(no_of_rows+1)+' required="true" onchange="calculate_amount(this.id)"  min=".01" max="9999999999.99" step=".01"></td> \
+    <td><input type="number" name ="rte[]" id=rate_id'+(no_of_rows+1)+' required="true" onchange="calculate_amount(this.id)"  min=".01" max="9999999999.99" step=".01" ></td> \
     <td><span id=amount'+(no_of_rows+1)+'></span></td> \
     <td><select name ="warehouses[]" id=warehouse_id'+(no_of_rows+1)+'>'+warehouse_options+'</select></td> \
     </tr>';
@@ -124,11 +125,12 @@
     change(item_select_box.id);
      
 }
-function deleteRow(row)
-{
-    var i=row.parentNode.parentNode.rowIndex;
-    document.getElementById("salesOrderTable").deleteRow(i);
-}
+// function deleteRow(row)
+// {
+//     var i=row.parentNode.parentNode.    $('#submit_handle').click();
+//     rowIndex;
+//     document.getElementById("salesOrderTable").deleteRow(i);
+// }
 
 function change(id){ 
     console.log("element in change ", id);
@@ -184,8 +186,8 @@ function change(id){
         }
         
 function changeCheck(){
-          var sales_order_delete = $('#sales_order-id');
-         
+          var sales_order_delete = $('#sales_order_id');
+          console.log(sales_order_delete);
           var checkboxes = document.getElementsByName("chk[]");
           //console.log(checkboxes);
           
@@ -214,7 +216,7 @@ function changeCheck(){
                 cache: false,
                 url: '/sales-orders/getitems',
                 data: { 
-                   sales_order_item_id:checkids
+                	sales_order_item_id:checkids
                 },
            dataType: 'json',
                 beforeSend: function(xhr) {
@@ -254,8 +256,10 @@ function changeCheck(){
         });
         }
             alert("selected row is deleted"); 
-        
+          
       }
+
+
     function calculate_amount(id){     
     console.log("id ",id);
     var input_box = document.getElementById(id);
@@ -291,17 +295,35 @@ function changeCheck(){
     function check_date(){
         var created_date = $("#created_date").val();
         var delivery_date = $("#delivery_date").val();
-       // var date1 = new Date(01,01,2018);
-      //  var date2 = new Date(31,12,2018);
-       // console.log("date validation",date2);
-        if(delivery_date > created_date)
+//         var quantity=document.getElementById("quantity");
+//         var rate=document.getElementById("rate");
+        if(delivery_date < created_date)
         {
-        window.alert("date entered is valid");
-        }
-        else{
-        //console.log("cbwu2222222222222",date2);
         window.alert("date entered is invalid, delivery date cannot be earlier then created date");
+        return false;
         }
+//         if(quantity.value==0||rate.value==0){
+//             window.alert("quantity or rate  cannot be zero");
+//             return false;
+//               }
+		    $('#btn_submit1').click();
+		
+        //document.getElementById("myForm").submit();
     }
+
+//     function check_qty_rte(id){
+//     	var element_id=id.replace(/[^0-9]/g, '');
+//         var quantity=document.getElementById("quantity-id"+element_id);
+//         var rate=document.getElementById("rate-id"+element_id);
+//         if(quantity.value==0||rate.value==0)
+//         {
+//         window.alert("quantity or rate  cannot be zero");
+//         return false;
+//         }
+        
+//         document.getElementById("myForm").submit();
+//     }
+    
+
  
 </script>

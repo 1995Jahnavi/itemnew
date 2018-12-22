@@ -75,7 +75,7 @@ class ItemGroupsController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The item group could not be saved. Please, try again.'));
+            $this->Flash->error(__('The item group with this name already exists, please try again with different name '));
         } else if($this->request->is('get')){
         	
          }
@@ -125,7 +125,7 @@ class ItemGroupsController extends AppController
             $error = 'The item group you are trying to delete is associated with other records';
             // The exact error message is $e->getMessage();
             $this->set('error', $e);
-            $this->Flash->error(__('The item group could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The item group could not be deleted because it is being used. Please, try again.'));
         }
         
 //         if ($this->ItemGroups->delete($itemGroup)) {

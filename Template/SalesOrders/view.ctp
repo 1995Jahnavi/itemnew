@@ -42,7 +42,6 @@
                 <th scope="col"><?= __('Units Id') ?></th>
                 <th scope="col"><?= __('Quantity') ?></th>
                 <th scope="col"><?= __('Rate') ?></th>
-                <th scope="col"><?= __('Amount') ?></th>
                 <th scope="col"><?= __('Warehouse Id') ?></th>
             </tr>
             <?php 
@@ -58,7 +57,6 @@
                 <td><?= h($salesOrderItems->unit_name) ?></td>
                 <td id="<?php echo $quantity; ?>"><?= h($salesOrderItems->quantity) ?></td>
                 <td id="<?php echo $rate; ?>"><?= h($salesOrderItems->rate) ?></td>
-                <td id="<?php echo $amount; ?>"><?= h($salesOrderItems->amount) ?></td>
                 <td><?= h($salesOrderItems->warehouse_name) ?></td>
             </tr>
 			 <?php
@@ -83,9 +81,8 @@
             var qty = $('#quantity_id'+i).text();
 			var rate = $('#rate_id'+i).text();
 			var amount = parseFloat(qty) * parseFloat(rate);
-			var amount = parseFloat(qty) * parseFloat(rate);
-			var amt=amount.toPrecision(4);
-			$('#amount_id'+i).text(amt);
+			//var amt=amount.toPrecision(4);
+			$('#amount_id'+i).text(amount);
             console.log(amount,qty,rate);            
 		}
 		}

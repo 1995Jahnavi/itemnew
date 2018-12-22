@@ -45,26 +45,26 @@ class ItemsTable extends Table
             'foreignKey' => 'item_group_id',
             'joinType' => 'INNER'
         ]);
-        $this->hasMany('StockMovementItems', [
-            'foreignKey' => 'item_id',
-            'dependent' => true,
-            'cascadeCallbacks' => true
-        ]);
-        $this->hasMany('Warehouses', [
-            'foreignKey' => 'item_id'
+//         $this->hasMany('StockMovementItems', [
+//             'foreignKey' => 'item_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
+//         $this->hasMany('Warehouses', [
+//             'foreignKey' => 'item_id'
             
-        ]);
-        $this->hasMany('SalesOrderItems', [
-            'foreignKey' => 'item_id',
-            'dependent' => true,
-            'cascadeCallbacks' => true
-        ]);
+//         ]);
+//         $this->hasMany('SalesOrderItems', [
+//             'foreignKey' => 'item_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
         
-        $this->hasMany('StockTransactions', [
-            'foreignKey' => 'item_id',
-            'dependent' => true,
-            'cascadeCallbacks' => true
-        ]);
+//         $this->hasMany('StockTransactions', [
+//             'foreignKey' => 'item_id',
+//             'dependent' => true,
+//             'cascadeCallbacks' => true
+//         ]);
     }
 
     /**

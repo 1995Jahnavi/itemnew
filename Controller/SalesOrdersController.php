@@ -87,10 +87,33 @@ class SalesOrdersController extends AppController
     public function add()
     {
         $data = $this->request->getData(); 
-       // debug($data);die();
+//        debug($data);die();
         $salesOrder = $this->SalesOrders->newEntity();
         
+       // $i = 0;
+        //$has_error=false;
         if ($this->request->is('post')) {
+//             foreach($data['items'] as $item)
+//             {
+                
+//                 $num = floatval($data['qty'][$i]);
+//                 $rate_num= floatval($data['rte'][$i]);
+// //                 debug($num);
+//                // $num=$data['qty'][$i];
+//                 if($num <= 0||$rate_num<=0){ 
+//                     $this->Flash->error(__('The sales order quantity  and rate cannot be 0'));
+//                     return $this->redirect(['action' => 'add']);
+//                     break;
+//                 }
+//                 else{
+//                    // return $this->redirect(['action' => 'add']);
+//                 }
+//                 $i++;
+                
+//             }
+            
+            
+            
             $salesOrder = $this->SalesOrders->patchEntity($salesOrder, $this->request->getData());
             if ($this->SalesOrders->save($salesOrder)) {
                
@@ -167,9 +190,11 @@ class SalesOrdersController extends AppController
         $salesOrder = $this->SalesOrders->get($id, [
             'contain' => ['SalesOrderItems']
         ]);
-       // debug($salesOrder);die();
+        
+     
         if ($this->request->is(['patch', 'post', 'put'])) {
-            
+           
+           
             $salesOrder = $this->SalesOrders->patchEntity($salesOrder, $this->request->getData());
             if ($this->SalesOrders->save($salesOrder)) {
                 $soi_table = TableRegistry::get('SalesOrderItems');
@@ -197,6 +222,7 @@ class SalesOrdersController extends AppController
                         //debug($stitem); die();
                         $stitem->unit_id= $data['units'][$i];
                         $stitem->quantity= $data['qty'][$i];
+                        
                         $stitem->warehouse_id= $data['warehouses'][$i];
                        //debug($stitem); die();
                         $stitem->rate= $data['rte'][$i];
@@ -207,11 +233,12 @@ class SalesOrdersController extends AppController
                         $status= $st_table->save($stitem);
                         
                        //debug($status); die();
+                        
                     }
                     }
                     
                else{
-                        debug("in else");
+                      //  debug("in else");
                         $salesOrderitem = $soi_table->newEntity();
                         $salesOrderitem->sales_order_id= $id;
                         $salesOrderitem->item_id= $item;
@@ -302,7 +329,7 @@ class SalesOrdersController extends AppController
             $error = 'The sales order  you are trying to delete is associated with other records';
             // The exact error message is $e->getMessage();
             $this->set('error', $e);
-            $this->Flash->error(__('The sales order  could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The sales order  could not be deleted because it is being used . Please, try again.'));
         }
 //         if ($this->SalesOrders->delete($salesOrder)) {
 //             $this->Flash->success(__('The sales order has been deleted.'));
@@ -343,11 +370,11 @@ public function getitems()
     $this->response->type('application/json');
     $this->autoRender = false ;
     $array = $this->request->data();
-  // debug($array);die();    //$id= $this->StockMovements->get($id);
+   //debug($array);die();    //$id= $this->StockMovements->get($id);
    
     $ids=$array['sales_order_item_id'];
     $this->set('ids', $ids);
-    debug($ids);die();
+   // debug($ids);die();
     $salesOrderItems_table = TableRegistry::get('SalesOrderItems');
     
     $status = true;

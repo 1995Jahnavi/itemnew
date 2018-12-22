@@ -56,7 +56,7 @@ class UnitsController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The unit could not be saved. Please, try again.'));
+            $this->Flash->error(__('The Unit with this name already exists, please try again with different name '));
         }
         $this->set(compact('unit'));
     }
@@ -104,7 +104,7 @@ class UnitsController extends AppController
             $error = 'The Unit you are trying to delete is associated with other records';
             // The exact error message is $e->getMessage();
             $this->set('error', $e);
-            $this->Flash->error(__('The Unit could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The Unit could not be deleted because it is being used. Please, try again.'));
         }
         
 //         if ($this->Units->delete($unit)) {

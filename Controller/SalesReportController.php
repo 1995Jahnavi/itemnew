@@ -19,11 +19,10 @@ class SalesReportController extends AppController
     {
         $salesOrdersItems_table = TableRegistry::get('SalesOrderItems');
         
-        
         //debug($sales_orders);die();
         $warehouse_table = TableRegistry::get('Warehouses');
-        $warehouse = $warehouse_table->find('list');
-        $this->set('warehouses', $warehouse);
+        $warehouses = $warehouse_table->find('list');
+        $this->set('warehouses', $warehouses);
         
         $items_table = TableRegistry::get('Items');
         $item = $items_table->find('list');
@@ -92,16 +91,35 @@ class SalesReportController extends AppController
             }
             
         }
-        $this->set('sales_orders',$sales_orders);
+//         $this->set('sales_orders',$sales_orders);
+      //  $query_date = '2018-11-04';
+        
+        $from_date=date('Y-m-01'); 
+        $to_date= date('Y-m-t');
+        
+        $this->set('from_date',$from_date);
+        $this->set('to_date',$to_date);
+        
+        //         debug($warehouses);die();
+        if(empty($data)){
+            $data["warehouse_id"] = "";//$warehouses->first();
+            $data["created_date"] = $from_date;
+            $data["delivary_date"] = $to_date;
+            $data["item_id"] = "";//$item;
+        }
+//         debug($data);die();
     
         $this->response->header('Access-Control-Allow-Origin', '*');
         
         $results = array();
         $results["sales_orders"] = $sales_orders;
-        $results["warehouses"] = $warehouse;
+        $results["data"] = $data;
+              //  debug($warehouses);die();
+        
+        $results["warehouses"] = $warehouses;
         $results["items"] = $item;
-         $this->set('results', $results);
-         $this->set('_serialize', ['results']);
+        $this->set('results', $results);
+        $this->set('_serialize', ['results']);
       
     }
       
@@ -173,6 +191,7 @@ class SalesReportController extends AppController
                 $stock_transactions = $stockTransactions_table->find('all');
             }
          }
+       
         
             $item_array=array();
            
@@ -192,8 +211,8 @@ class SalesReportController extends AppController
                 {
                     
                     $stock_transaction->transaction_date=date("d-m-Y", strtotime($stock_transaction->transaction_date));
-                    $st_item =$items_table->get($stock_transaction->item_id);
                     
+                    $st_item =$items_table->get($stock_transaction->item_id);
                     if($stock_transaction->unit_id==$st_item->purchase_unit)
                     {
                         $stock_transaction->quantity *= $st_item->sell_unit_qty;
@@ -206,12 +225,27 @@ class SalesReportController extends AppController
                     }
                     
                 }
-                else{
-                    $item_array[$stock_transaction->item_id] += $stock_transaction->quantity;
-                    $stock_transaction->balance=$item_array[$stock_transaction->item_id];       
-                   //debug($stock_transactions->balance);die();                
+  
+                
+                if($stock_transaction->type==2)
+                {
+                    
+                    $stock_transaction->transaction_date=date("d-m-Y", strtotime($stock_transaction->transaction_date));
+                    
+                    $st_item =$items_table->get($stock_transaction->item_id);
+                    if($stock_transaction->unit_id==$st_item->purchase_unit)
+                    {
+                        $stock_transaction->quantity *= $st_item->sell_unit_qty;
+                        $item_array[$stock_transaction->item_id.$stock_transaction->warehouse_id] += $stock_transaction->quantity;
+                        $stock_transaction->balance=$item_array[$stock_transaction->item_id.$stock_transaction->warehouse_id];
+                    }
+                    else{
+                        $item_array[$stock_transaction->item_id.$stock_transaction->warehouse_id] += $stock_transaction->quantity;
+                        $stock_transaction->balance=$item_array[$stock_transaction->item_id.$stock_transaction->warehouse_id];
+                    }
+                    
                 }
-               
+                    
             }
             
             
